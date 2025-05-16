@@ -1,0 +1,113 @@
+﻿@model IEnumerable<BaiTHbuoi1.Models.Contact>
+
+@{
+    ViewData["Title"] = "Quản Lý Tin Nhắn Liên Hệ";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Quản Lý Tin Nhắn Liên Hệ</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Tin Nhắn Liên Hệ</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn @(ViewBag.UnreadOnly == true ? "btn-outline-primary" : "btn-primary") btn-sm">
+                <i class="fas fa-list me-1"></i> Tất Cả Tin Nhắn
+            </a>
+            <a asp-action="Index" asp-route-unread="true" class="btn @(ViewBag.UnreadOnly == true ? "btn-primary" : "btn-outline-primary") btn-sm">
+                <i class="fas fa-envelope me-1"></i> Chưa Đọc
+            </a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-envelope me-2"></i>
+                <span class="fw-semibold">Danh Sách Tin Nhắn Liên Hệ</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="contactsTable" class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Trạng Thái</th>
+                        <th>Người Gửi</th>
+                        <th>Email</th>
+                        <th>Tiêu Đề</th>
+                        <th>Thời Gian</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@(!item.IsRead ? "fw-bold" : "")">
+                            <td>
+                                @if (item.IsRead)
+                                {
+                                    <span class="badge bg-success">Đã Đọc</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Chưa Đọc</span>
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Subject)</td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" title="Chi tiết">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    @if (item.IsRead)
+                                    {
+                                        <form asp-action="MarkAsUnread" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-warning btn-sm" title="Đánh dấu chưa đọc">
+                                                <i class="fas fa-envelope"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="MarkAsRead" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm" title="Đánh dấu đã đọc">
+                                                <i class="fas fa-envelope-open"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#contactsTable').DataTable({
+                responsive: true,
+                order: [[4, 'desc']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                }
+            });
+        });
+    </script>
+}

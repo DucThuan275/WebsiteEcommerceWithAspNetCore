@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Không có quyền truy cập";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // hoặc _AdminLayout nếu dùng layout riêng
+}
+
+<style>
+    .access-denied {
+        margin-top: 100px;
+        text-align: center;
+    }
+
+        .access-denied h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .access-denied p {
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+        }
+
+        .access-denied .btn {
+            margin: 0 10px;
+            min-width: 150px;
+        }
+</style>
+
+<div class="container access-denied">
+    <h1>403 - Không có quyền truy cập</h1>
+    <p class="lead">Bạn không được phép truy cập vào khu vực này hoặc chưa đăng nhập.</p>
+
+    <div class="d-flex justify-content-center flex-wrap">
+        <a href="/Account/Login" class="btn btn-outline-primary mb-2">Đăng nhập</a>
+        <a href="/Account/Register" class="btn btn-outline-secondary mb-2">Đăng ký</a>
+        <a href="/" class="btn btn-primary mb-2">Về trang chủ</a>
+    </div>
+</div>

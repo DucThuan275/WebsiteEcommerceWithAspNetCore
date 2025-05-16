@@ -1,0 +1,634 @@
+﻿@model BaiTHbuoi1.Models.News
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<style>
+    :root {
+        --primary-color: #00c07f;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .news-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .news-detail-header {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .news-detail-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    .news-detail-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .news-detail-meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+        .news-detail-meta-item i {
+            margin-right: 0.5rem;
+        }
+
+    .news-detail-category {
+        display: inline-block;
+        background-color: rgba(0, 192, 127, 0.1);
+        color: var(--primary-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-right: 1rem;
+    }
+
+    .news-detail-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .news-detail-content {
+        background-color: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+        .news-detail-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .news-detail-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-detail-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-detail-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .news-detail-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1.5rem;
+            font-style: italic;
+            margin: 1.5rem 0;
+        }
+
+    .news-detail-tags {
+        margin-bottom: 2rem;
+    }
+
+    .news-detail-tag {
+        display: inline-block;
+        background-color: #f0f0f0;
+        color: var(--text-muted);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        text-decoration: none;
+    }
+
+        .news-detail-tag:hover {
+            background-color: #e0e0e0;
+            color: var(--text-color);
+        }
+
+    .news-detail-share {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .news-detail-share-label {
+        margin-right: 1rem;
+        font-weight: 500;
+    }
+
+    .news-detail-share-buttons {
+        display: flex;
+    }
+
+    .news-detail-share-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        color: var(--text-muted);
+        margin-right: 0.75rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+        .news-detail-share-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .news-detail-share-button.facebook:hover {
+            background-color: #3b5998;
+            color: white;
+        }
+
+        .news-detail-share-button.twitter:hover {
+            background-color: #1da1f2;
+            color: white;
+        }
+
+        .news-detail-share-button.linkedin:hover {
+            background-color: #0077b5;
+            color: white;
+        }
+
+        .news-detail-share-button.pinterest:hover {
+            background-color: #bd081c;
+            color: white;
+        }
+
+    .news-detail-author {
+        background-color: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .news-detail-author-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1.5rem;
+    }
+
+    .news-detail-author-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .news-detail-author-bio {
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+    }
+
+    .news-detail-author-social {
+        display: flex;
+    }
+
+    .news-detail-author-social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        color: var(--text-muted);
+        margin-right: 0.5rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+        .news-detail-author-social-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+    .related-news-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+        .related-news-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .related-news-card-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .related-news-card-content {
+        padding: 1.25rem;
+    }
+
+    .related-news-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+        .related-news-card-title a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+            .related-news-card-title a:hover {
+                color: var(--primary-color);
+            }
+
+    .related-news-card-meta {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .related-news-card-meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+        .related-news-card-meta-item i {
+            margin-right: 0.25rem;
+        }
+
+    .sidebar-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+
+    .sidebar-card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .sidebar-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .sidebar-card-body {
+        padding: 1.25rem;
+    }
+
+    .popular-news-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .popular-news-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .popular-news-item-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 1rem;
+    }
+
+    .popular-news-item-content {
+        flex-grow: 1;
+    }
+
+    .popular-news-item-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        line-height: 1.4;
+    }
+
+        .popular-news-item-title a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+            .popular-news-item-title a:hover {
+                color: var(--primary-color);
+            }
+
+    .popular-news-item-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .newsletter-form input {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container news-detail-container">
+    <div class="news-detail-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="News" asp-action="Index">Tin tức</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <article>
+                <h1 class="news-detail-title">@Model.Title</h1>
+
+                <div class="news-detail-meta">
+                    <span class="news-detail-category">Tin tức</span>
+                    <div class="news-detail-meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>@(string.IsNullOrEmpty(Model.Author) ? "Admin" : Model.Author)</span>
+                    </div>
+                    <div class="news-detail-meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>@Model.PublishDate.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="news-detail-meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>5 phút đọc</span>
+                    </div>
+                    <div class="news-detail-meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>1.2K lượt xem</span>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Title" class="news-detail-image">
+                }
+
+                <div class="news-detail-content">
+                    @Html.Raw(Model.Content)
+                </div>
+
+                <div class="news-detail-tags">
+                    <a href="#" class="news-detail-tag">#tin tức</a>
+                    <a href="#" class="news-detail-tag">#sản phẩm</a>
+                    <a href="#" class="news-detail-tag">#khuyến mãi</a>
+                    <a href="#" class="news-detail-tag">#mới nhất</a>
+                </div>
+
+                <div class="news-detail-share">
+                    <div class="news-detail-share-label">Chia sẻ:</div>
+                    <div class="news-detail-share-buttons">
+                        <a href="#" class="news-detail-share-button facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="news-detail-share-button twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="news-detail-share-button linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="news-detail-share-button pinterest">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="news-detail-author">
+                    <img src="/images/placeholder.jpg" alt="Author" class="news-detail-author-avatar">
+                    <div>
+                        <h4 class="news-detail-author-name">@(string.IsNullOrEmpty(Model.Author) ? "Admin" : Model.Author)</h4>
+                        <p class="news-detail-author-bio">Chuyên gia trong lĩnh vực thương mại điện tử với hơn 5 năm kinh nghiệm. Luôn cập nhật những xu hướng mới nhất về sản phẩm và dịch vụ.</p>
+                        <div class="news-detail-author-social">
+                            <a href="#" class="news-detail-author-social-link">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="news-detail-author-social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="news-detail-author-social-link">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="news-detail-author-social-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Related News -->
+            <h3 class="section-title">Bài viết liên quan</h3>
+            <div class="row">
+                @if (ViewBag.RelatedNews != null && ViewBag.RelatedNews.Count > 0)
+                {
+                    @foreach (var news in ViewBag.RelatedNews)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="related-news-card">
+                                <img src="@(string.IsNullOrEmpty(news.ImageUrl) ? "/images/placeholder.jpg" : news.ImageUrl)"
+                                     alt="@news.Title" class="related-news-card-img">
+                                <div class="related-news-card-content">
+                                    <h4 class="related-news-card-title">
+                                        <a asp-action="Details" asp-route-id="@news.Id">@news.Title</a>
+                                    </h4>
+                                    <div class="related-news-card-meta">
+                                        <div class="related-news-card-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>@news.PublishDate.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <p class="text-muted">Không có bài viết liên quan.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Popular News -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <h4 class="sidebar-card-title">Bài viết phổ biến</h4>
+                </div>
+                <div class="sidebar-card-body">
+                    @if (ViewBag.PopularNews != null && ViewBag.PopularNews.Count > 0)
+                    {
+                        @foreach (var news in ViewBag.PopularNews)
+                        {
+                            <div class="popular-news-item">
+                                <img src="@(string.IsNullOrEmpty(news.ImageUrl) ? "/images/placeholder.jpg" : news.ImageUrl)"
+                                     alt="@news.Title" class="popular-news-item-img">
+                                <div class="popular-news-item-content">
+                                    <h5 class="popular-news-item-title">
+                                        <a asp-action="Details" asp-route-id="@news.Id">@news.Title</a>
+                                    </h5>
+                                    <div class="popular-news-item-meta">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        <span>@news.PublishDate.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Không có bài viết phổ biến.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <h4 class="sidebar-card-title">Danh mục</h4>
+                </div>
+                <div class="sidebar-card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Sản phẩm mới
+                            <span class="badge bg-primary rounded-pill">12</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Khuyến mãi
+                            <span class="badge bg-primary rounded-pill">8</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Hướng dẫn
+                            <span class="badge bg-primary rounded-pill">15</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Sự kiện
+                            <span class="badge bg-primary rounded-pill">6</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Công nghệ
+                            <span class="badge bg-primary rounded-pill">9</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <h4 class="sidebar-card-title">Đăng ký nhận tin</h4>
+                </div>
+                <div class="sidebar-card-body">
+                    <p class="text-muted mb-3">Nhận thông báo về các bài viết mới nhất và khuyến mãi đặc biệt.</p>
+                    <form class="newsletter-form">
+                        <input type="email" class="form-control" placeholder="Email của bạn" required>
+                        <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <h4 class="sidebar-card-title">Thẻ phổ biến</h4>
+                </div>
+                <div class="sidebar-card-body">
+                    <div class="d-flex flex-wrap">
+                        <a href="#" class="news-detail-tag">#tin tức</a>
+                        <a href="#" class="news-detail-tag">#sản phẩm</a>
+                        <a href="#" class="news-detail-tag">#khuyến mãi</a>
+                        <a href="#" class="news-detail-tag">#mới nhất</a>
+                        <a href="#" class="news-detail-tag">#công nghệ</a>
+                        <a href="#" class="news-detail-tag">#xu hướng</a>
+                        <a href="#" class="news-detail-tag">#thời trang</a>
+                        <a href="#" class="news-detail-tag">#mẹo hay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

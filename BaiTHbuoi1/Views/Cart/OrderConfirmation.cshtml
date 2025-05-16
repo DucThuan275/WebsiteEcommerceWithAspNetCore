@@ -1,0 +1,578 @@
+﻿@model BaiTHbuoi1.Models.Order
+
+@{
+    ViewData["Title"] = "Xác nhận đơn hàng";
+}
+
+<style>
+    :root {
+        --primary-color: #4caf50;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .confirmation-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .confirmation-header {
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .confirmation-section {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .confirmation-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .confirmation-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-step {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 25%;
+    }
+
+        .confirmation-step:not(:last-child)::after {
+            background-color: var(--border-color);
+            content: '';
+            height: 2px;
+            position: absolute;
+            right: -50%;
+            top: 1rem;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .confirmation-step.completed:not(:last-child)::after {
+            background-color: var(--primary-color);
+        }
+
+    .confirmation-step-icon {
+        align-items: center;
+        background-color: #fff;
+        border: 2px solid var(--border-color);
+        border-radius: 50%;
+        color: var(--text-muted);
+        display: flex;
+        font-size: 1rem;
+        height: 2.5rem;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        position: relative;
+        width: 2.5rem;
+        z-index: 2;
+    }
+
+    .confirmation-step.completed .confirmation-step-icon {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .confirmation-step-label {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .confirmation-step.completed .confirmation-step-label {
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .order-success {
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .order-success-icon {
+        background-color: rgba(76, 175, 80, 0.1);
+        border-radius: 50%;
+        color: var(--primary-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        height: 5rem;
+        width: 5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-success-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-success-message {
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+    .order-info {
+        background-color: var(--light-gray);
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem 1.5rem;
+    }
+
+    .order-info-item {
+        display: flex;
+        margin-bottom: 0.5rem;
+    }
+
+        .order-info-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .order-info-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-right: 0.5rem;
+    }
+
+    .order-info-value {
+        font-weight: 600;
+    }
+
+    .address-box {
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 1rem;
+    }
+
+    .address-box-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .address-box-content {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .payment-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-info-icon {
+        background-color: rgba(76, 175, 80, 0.1);
+        border-radius: 50%;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        height: 2.5rem;
+        width: 2.5rem;
+        margin-right: 1rem;
+    }
+
+    .payment-info-content {
+        flex-grow: 1;
+    }
+
+    .payment-info-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .payment-info-description {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-bottom: 0;
+    }
+
+    .order-item {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .order-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .order-item-title {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-item-meta {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+
+    .order-item-price {
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .order-item-quantity {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        text-align: right;
+    }
+
+    .order-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .order-summary-label {
+        color: var(--text-muted);
+    }
+
+    .order-summary-value {
+        font-weight: 500;
+    }
+
+    .order-summary-total {
+        border-top: 1px solid #eee;
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    .order-summary-total-label {
+        font-weight: 600;
+    }
+
+    .order-summary-total-value {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--primary-color);
+    }
+
+    .next-steps {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .next-step-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+        .next-step-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .next-step-icon {
+        background-color: rgba(76, 175, 80, 0.1);
+        border-radius: 50%;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        height: 2.5rem;
+        width: 2.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .next-step-content {
+        flex-grow: 1;
+    }
+
+    .next-step-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .next-step-description {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-bottom: 0;
+    }
+
+    .btn-action {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s;
+    }
+
+        .btn-action:hover {
+            background-color: #43a047;
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary-action {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        color: var(--text-color);
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s;
+    }
+
+        .btn-secondary-action:hover {
+            background-color: #f8f9fa;
+        }
+</style>
+
+<div class="container confirmation-container">
+    <div class="confirmation-steps">
+        <div class="confirmation-step completed">
+            <div class="confirmation-step-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="confirmation-step-label">Giỏ hàng</div>
+        </div>
+        <div class="confirmation-step completed">
+            <div class="confirmation-step-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="confirmation-step-label">Giao hàng</div>
+        </div>
+        <div class="confirmation-step completed">
+            <div class="confirmation-step-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="confirmation-step-label">Thanh toán</div>
+        </div>
+        <div class="confirmation-step completed">
+            <div class="confirmation-step-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="confirmation-step-label">Xác nhận</div>
+        </div>
+    </div>
+
+    <div class="confirmation-section">
+        <div class="order-success">
+            <div class="order-success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="order-success-title">Đặt hàng thành công!</h2>
+            <p class="order-success-message">Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xác nhận.</p>
+            <div class="order-info">
+                <div class="order-info-item">
+                    <span class="order-info-label">Mã đơn hàng:</span>
+                    <span class="order-info-value">#@Model.Id</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Ngày đặt hàng:</span>
+                    <span class="order-info-value">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Trạng thái thanh toán:</span>
+                    <span class="order-info-value">@Model.PaymentStatus</span>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/Product" class="btn btn-secondary-action">
+                    <i class="fas fa-shopping-bag me-2"></i> Tiếp tục mua sắm
+                </a>
+                <a href="/Order/MyOrders" class="btn btn-action">
+                    <i class="fas fa-list me-2"></i> Xem đơn hàng của tôi
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="confirmation-section">
+                <h3 class="confirmation-section-title">Thông tin giao hàng</h3>
+                <div class="address-box">
+                    <div class="address-box-title">@Model.ShippingName</div>
+                    <div class="address-box-content">
+                        <p class="mb-1">@Model.ShippingAddress</p>
+                        <p class="mb-1">@Model.ShippingCity, @Model.ShippingPostalCode</p>
+                        <p class="mb-1">@Model.ShippingCountry</p>
+                        <p class="mb-0">Điện thoại: @Model.ShippingPhone</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="confirmation-section">
+                <h3 class="confirmation-section-title">Phương thức thanh toán</h3>
+                <div class="payment-info">
+                    <div class="payment-info-icon">
+                        @if (Model.PaymentMethod == "Credit Card")
+                        {
+                            <i class="fas fa-credit-card"></i>
+                        }
+                        else if (Model.PaymentMethod == "PayPal")
+                        {
+                            <i class="fab fa-paypal"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-money-bill-wave"></i>
+                        }
+                    </div>
+                    <div class="payment-info-content">
+                        <div class="payment-info-title">@Model.PaymentMethod</div>
+                        <div class="payment-info-description">
+                            @if (Model.PaymentMethod == "Cash on Delivery")
+                            {
+                                <span>Thanh toán khi nhận hàng</span>
+                            }
+                            else if (Model.PaymentMethod == "Credit Card")
+                            {
+                                <span>Thẻ tín dụng kết thúc bằng ****1234</span>
+                            }
+                            else
+                            {
+                                <span>Thanh toán qua @Model.PaymentMethod</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirmation-section">
+        <h3 class="confirmation-section-title">Chi tiết đơn hàng</h3>
+
+        @foreach (var item in Model.OrderItems)
+        {
+            <div class="order-item">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img src="@(item.Product?.ImageUrl ?? "/images/placeholder.jpg")"
+                             alt="@(item.Product?.Name ?? "Sản phẩm")" class="order-item-image">
+                    </div>
+                    <div class="col">
+                        <div class="order-item-title">@(item.Product?.Name ?? "Sản phẩm")</div>
+                        <div class="order-item-meta">Phân loại: Mặc định</div>
+                    </div>
+                    <div class="col-auto text-end">
+                        <div class="order-item-price">@item.UnitPrice.ToString("N0")₫</div>
+                        <div class="order-item-quantity">x@(item.Quantity)</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="mt-4">
+            <div class="order-summary-row">
+                <span class="order-summary-label">Tạm tính</span>
+                <span class="order-summary-value">@Model.TotalAmount.ToString("N0")₫</span>
+            </div>
+            <div class="order-summary-row">
+                <span class="order-summary-label">Phí vận chuyển</span>
+                <span class="order-summary-value">0₫</span>
+            </div>
+            <div class="order-summary-row">
+                <span class="order-summary-label">Thuế</span>
+                <span class="order-summary-value">0₫</span>
+            </div>
+            <div class="order-summary-row order-summary-total">
+                <span class="order-summary-total-label">Tổng cộng</span>
+                <span class="order-summary-total-value">@Model.TotalAmount.ToString("N0")₫</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="next-steps">
+        <h3 class="confirmation-section-title">Các bước tiếp theo</h3>
+
+        <div class="next-step-item">
+            <div class="next-step-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="next-step-content">
+                <div class="next-step-title">Email xác nhận</div>
+                <div class="next-step-description">Chúng tôi đã gửi email xác nhận đơn hàng đến địa chỉ email của bạn.</div>
+            </div>
+        </div>
+
+        <div class="next-step-item">
+            <div class="next-step-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="next-step-content">
+                <div class="next-step-title">Chuẩn bị đơn hàng</div>
+                <div class="next-step-description">Đơn hàng của bạn đang được chuẩn bị và sẽ được giao trong thời gian sớm nhất.</div>
+            </div>
+        </div>
+
+        <div class="next-step-item">
+            <div class="next-step-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <div class="next-step-content">
+                <div class="next-step-title">Vận chuyển</div>
+                <div class="next-step-description">Bạn sẽ nhận được thông báo khi đơn hàng được giao cho đơn vị vận chuyển.</div>
+            </div>
+        </div>
+
+        <div class="next-step-item">
+            <div class="next-step-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="next-step-content">
+                <div class="next-step-title">Đánh giá</div>
+                <div class="next-step-description">Sau khi nhận hàng, hãy đánh giá sản phẩm để giúp chúng tôi cải thiện dịch vụ.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add any JavaScript functionality here if needed
+        });
+    </script>
+}

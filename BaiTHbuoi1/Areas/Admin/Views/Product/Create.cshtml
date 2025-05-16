@@ -1,0 +1,257 @@
+﻿@model BaiTHbuoi1.Models.Product
+
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm Mới";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Thêm Sản Phẩm Mới</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Sản Phẩm</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Thêm Mới</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert"></div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span class="fw-semibold">Thông Tin Cơ Bản</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Tên Sản Phẩm <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control bg-dark text-light border-secondary" placeholder="Nhập tên sản phẩm" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Mô Tả</label>
+                            <textarea asp-for="Description" class="form-control bg-dark text-light border-secondary" rows="4" placeholder="Nhập mô tả chi tiết về sản phẩm"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CategoryId" class="form-label">Danh Mục <span class="text-danger">*</span></label>
+                                    <select asp-for="CategoryId" class="form-select bg-dark text-light border-secondary" asp-items="ViewBag.CategoryId">
+                                        <option value="">-- Chọn Danh Mục --</option>
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="SupplierId" class="form-label">Nhà Cung Cấp</label>
+                                    <select asp-for="SupplierId" class="form-select bg-dark text-light border-secondary" asp-items="ViewBag.SupplierId">
+                                        <option value="">-- Chọn Nhà Cung Cấp (Tùy Chọn) --</option>
+                                    </select>
+                                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tag me-2"></i>
+                            <span class="fw-semibold">Giá & Kho Hàng</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Price" class="form-label">Giá Bán (₫) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input asp-for="Price" class="form-control bg-dark text-light border-secondary" type="number" step="1000" min="0" placeholder="Nhập giá bán" />
+                                        <span class="input-group-text bg-dark border-secondary text-light">₫</span>
+                                    </div>
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="DiscountPrice" class="form-label">Giá Khuyến Mãi (₫)</label>
+                                    <div class="input-group">
+                                        <input asp-for="DiscountPrice" class="form-control bg-dark text-light border-secondary" type="number" step="1000" min="0" placeholder="Nhập giá khuyến mãi" />
+                                        <span class="input-group-text bg-dark border-secondary text-light">₫</span>
+                                    </div>
+                                    <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                                    <div class="form-text text-light-50" id="discountPercentage"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Stock" class="form-label">Số Lượng Tồn Kho <span class="text-danger">*</span></label>
+                                    <input asp-for="Stock" class="form-control bg-dark text-light border-secondary" type="number" min="0" placeholder="Nhập số lượng tồn kho" />
+                                    <span asp-validation-for="Stock" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-image me-2"></i>
+                            <span class="fw-semibold">Hình Ảnh Sản Phẩm</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <img id="imagePreview" src="/images/no-image.png" alt="Xem Trước Hình Ảnh" class="img-fluid rounded" style="max-height: 200px; width: auto;" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="imageFile" class="form-label">Tải Lên Hình Ảnh</label>
+                            <input type="file" class="form-control bg-dark text-light border-secondary" id="imageFile" name="file" accept="image/*" />
+                            <div class="form-text text-light-50">Định dạng hỗ trợ: JPG, JPEG, PNG, GIF. Kích thước tối đa: 5MB.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-cog me-2"></i>
+                            <span class="fw-semibold">Trạng Thái Sản Phẩm</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsActive" class="form-check-input" checked />
+                            <label asp-for="IsActive" class="form-check-label">Kích Hoạt</label>
+                            <div class="form-text text-light-50">Sản phẩm sẽ hiển thị trên website</div>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsFeatured" class="form-check-input" />
+                            <label asp-for="IsFeatured" class="form-check-label">Sản Phẩm Nổi Bật</label>
+                            <div class="form-text text-light-50">Hiển thị trong mục sản phẩm nổi bật</div>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsNewArrival" class="form-check-input" />
+                            <label asp-for="IsNewArrival" class="form-check-label">Hàng Mới Về</label>
+                            <div class="form-text text-light-50">Đánh dấu là sản phẩm mới</div>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsOnSale" class="form-check-input" id="isOnSale" />
+                            <label asp-for="IsOnSale" class="form-check-label">Đang Giảm Giá</label>
+                            <div class="form-text text-light-50">Áp dụng giá khuyến mãi</div>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsBestSeller" class="form-check-input" />
+                            <label asp-for="IsBestSeller" class="form-check-label">Bán Chạy Nhất</label>
+                            <div class="form-text text-light-50">Đánh dấu là sản phẩm bán chạy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-save me-2"></i>
+                            <span class="fw-semibold">Thao Tác</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-save me-1"></i> Lưu Sản Phẩm
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-light w-100">
+                            <i class="fas fa-times me-1"></i> Hủy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            // Xem trước hình ảnh
+            $("#imageFile").change(function () {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Xử lý khi chọn Đang Giảm Giá
+            $("#isOnSale").change(function() {
+                if ($(this).is(":checked")) {
+                    // Nếu chưa có giá khuyến mãi, tính giảm 10%
+                    var currentPrice = parseFloat($("#Price").val()) || 0;
+                    var currentDiscount = parseFloat($("#DiscountPrice").val()) || 0;
+
+                    if (currentDiscount <= 0 && currentPrice > 0) {
+                        var suggestedDiscount = Math.round(currentPrice * 0.9 / 1000) * 1000;
+                        $("#DiscountPrice").val(suggestedDiscount);
+                        updateDiscountPercentage();
+                    }
+                }
+            });
+
+            // Cập nhật giá khuyến mãi khi thay đổi giá gốc
+            $("#Price").change(function() {
+                updateDiscountPercentage();
+                if ($("#isOnSale").is(":checked")) {
+                    var currentPrice = parseFloat($(this).val()) || 0;
+                    var currentDiscount = parseFloat($("#DiscountPrice").val()) || 0;
+
+                    if (currentDiscount <= 0 || currentDiscount >= currentPrice) {
+                        var suggestedDiscount = Math.round(currentPrice * 0.9 / 1000) * 1000;
+                        $("#DiscountPrice").val(suggestedDiscount);
+                        updateDiscountPercentage();
+                    }
+                }
+            });
+
+            // Cập nhật phần trăm giảm giá khi thay đổi giá khuyến mãi
+            $("#DiscountPrice").change(function() {
+                updateDiscountPercentage();
+            });
+
+            // Hàm tính phần trăm giảm giá
+            function updateDiscountPercentage() {
+                var price = parseFloat($("#Price").val()) || 0;
+                var discountPrice = parseFloat($("#DiscountPrice").val()) || 0;
+
+                if (price > 0 && discountPrice > 0 && discountPrice < price) {
+                    var discountPercent = Math.round((1 - discountPrice / price) * 100);
+                    $("#discountPercentage").html(`<i class="fas fa-tag me-1"></i> Giảm ${discountPercent}% so với giá gốc`);
+                } else {
+                    $("#discountPercentage").html('');
+                }
+            }
+        });
+    </script>
+}

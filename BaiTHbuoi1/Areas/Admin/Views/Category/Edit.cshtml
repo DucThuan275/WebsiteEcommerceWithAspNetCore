@@ -1,0 +1,97 @@
+﻿@model BaiTHbuoi1.Models.Category
+@{
+    ViewData["Title"] = "Chỉnh Sửa Danh Mục";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Chỉnh Sửa Danh Mục</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Danh Mục</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Chỉnh Sửa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark border-secondary py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-edit me-2"></i>
+                <span class="fw-semibold">Chỉnh Sửa Thông Tin Danh Mục</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Tên Danh Mục <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Mô Tả</label>
+                            <textarea asp-for="Description" class="form-control bg-dark text-light border-secondary" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DisplayOrder" class="form-label">Thứ Tự Hiển Thị</label>
+                            <input asp-for="DisplayOrder" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="imageFile" class="form-label">Hình Ảnh Danh Mục</label>
+                            <input type="file" id="imageFile" name="imageFile" class="form-control bg-dark text-light border-secondary" accept="image/*" onchange="previewImage(this)" />
+                            <div class="form-text text-light-50">Để trống nếu muốn giữ nguyên hình ảnh hiện tại</div>
+                            <div class="mt-3 text-center">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img id="imagePreview" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 200px; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                    <img id="imagePreview" src="/images/no-image.png" alt="Không có hình ảnh" class="img-fluid rounded" style="max-height: 200px; object-fit: contain;" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu Thay Đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-1"></i> Quay Lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imagePreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,280 @@
+﻿@model BaiTHbuoi1.Controllers.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --primary-color: #7952b3;
+        --primary-light: #9d7fda;
+        --primary-dark: #5a3a8a;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: #f0e6ff;
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .login-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-left {
+        background-color: #fff;
+        padding: 50px;
+    }
+
+    .login-right {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        padding: 0;
+        position: relative;
+    }
+
+    .login-image-container {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+    }
+
+    .login-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-image-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        z-index: 1;
+    }
+
+    .login-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--text-color);
+    }
+
+    .login-subtitle {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+    }
+
+    .form-control {
+        height: 50px;
+        border-radius: 10px;
+        padding-left: 45px;
+        border: 1px solid #e1e1e1;
+        background-color: #f8f9fa;
+        margin-bottom: 20px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(121, 82, 179, 0.25);
+            border-color: var(--primary-light);
+        }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 17px;
+        color: var(--text-muted);
+    }
+
+    .btn-login {
+        height: 50px;
+        border-radius: 10px;
+        background-color: var(--primary-color);
+        border: none;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+        }
+
+    .login-divider {
+        text-align: center;
+        margin: 30px 0;
+        position: relative;
+    }
+
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #e1e1e1;
+        }
+
+        .login-divider::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #e1e1e1;
+        }
+
+    .social-login {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-social {
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        border: 1px solid #e1e1e1;
+        background-color: #fff;
+        color: var(--text-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-social:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .btn-social img {
+            height: 24px;
+            margin-right: 10px;
+        }
+
+    .login-footer {
+        margin-top: 30px;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .login-footer a:hover {
+                text-decoration: underline;
+            }
+
+    .light-bulb {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: #fff;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+    }
+
+        .light-bulb i {
+            color: #ffc107;
+            font-size: 24px;
+        }
+</style>
+
+<div class="container login-container">
+    <div class="row g-0">
+        <!-- Columna izquierda - Formulario de inicio de sesión -->
+        <div class="col-md-6 login-left">
+            <h1 class="login-title">ĐĂNG NHẬP</h1>
+            <p class="login-subtitle">Chào mừng bạn quay trở lại! Vui lòng đăng nhập để tiếp tục.</p>
+
+            <form asp-controller="Account" asp-action="Login" method="post">
+                <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3 position-relative">
+                    <i class="fas fa-user input-icon"></i>
+                    <input asp-for="Email" class="form-control" placeholder="Tên đăng nhập" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input asp-for="Password" class="form-control" placeholder="Mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Ghi nhớ đăng nhập</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">Đăng Nhập Ngay</button>
+            </form>
+
+            <div class="login-divider">
+                <span>hoặc</span>
+            </div>
+
+            <div class="social-login">
+                <a href="#" class="btn-social">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google">
+                    Đăng nhập với Google
+                </a>
+                <a href="#" class="btn-social">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+                    Đăng nhập với Facebook
+                </a>
+            </div>
+            <div class="login-footer">
+                <p>Chưa có tài khoản? <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">Đăng ký ngay</a></p>
+                <div class="mt-1 text-end">
+                    <a asp-action="ForgotPassword" class="text-decoration-none">Quên mật khẩu?</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha - Imagen -->
+        <div class="col-md-6 login-right">
+            <div class="login-image-container">
+                <div class="light-bulb">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="login-image-bg"></div>
+                <img src="https://img.freepik.com/free-photo/young-woman-working-laptop_23-2149038406.jpg" alt="Login" class="login-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

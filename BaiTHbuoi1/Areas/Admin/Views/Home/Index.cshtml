@@ -1,0 +1,998 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Bảng Điều Khiển</h1>
+    <p class="dashboard-subtitle">Thống kê hệ thống</p>
+
+    <!-- Stats Cards Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-number">@ViewBag.TotalProducts</div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon blue-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Product" class="view-details">Xem Sản Phẩm <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-number">@ViewBag.TotalOrders</div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon green-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Order" class="view-details">Xem Đơn Hàng <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-number">@ViewBag.TotalCategories</div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon blue-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Category" class="view-details">Xem Danh Mục <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-number">@ViewBag.TotalCustomers</div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon orange-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/User" class="view-details orange-text">Xem Khách Hàng <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Tổng Doanh Thu</div>
+                <div class="stat-number">
+                    @{
+                        // Tính tổng doanh thu từ tất cả đơn hàng
+                        decimal totalRevenue = 0;
+                        if (ViewBag.RecentOrders != null)
+                        {
+                            foreach (var order in ViewBag.RecentOrders)
+                            {
+                                totalRevenue += order.TotalAmount;
+                            }
+                        }
+                    }
+                    @string.Format("{0:N0} ₫", totalRevenue)
+                </div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon purple-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Order" class="view-details purple-text">Xem Chi Tiết <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Đơn Hàng Hoàn Thành</div>
+                <div class="stat-number">
+                    @{
+                        // Đếm số đơn hàng đã hoàn thành
+                        int completedOrders = 0;
+                        if (ViewBag.RecentOrders != null)
+                        {
+                            foreach (var order in ViewBag.RecentOrders)
+                            {
+                                if (order.OrderStatus == "Delivered")
+                                {
+                                    completedOrders++;
+                                }
+                            }
+                        }
+                    }
+                    @completedOrders
+                </div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon green-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Order?status=Delivered" class="view-details">Xem Chi Tiết <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Đơn Hàng Đang Xử Lý</div>
+                <div class="stat-number">
+                    @{
+                        // Đếm số đơn hàng đang xử lý
+                        int pendingOrders = 0;
+                        if (ViewBag.RecentOrders != null)
+                        {
+                            foreach (var order in ViewBag.RecentOrders)
+                            {
+                                if (order.OrderStatus == "Pending" || order.OrderStatus == "Processing")
+                                {
+                                    pendingOrders++;
+                                }
+                            }
+                        }
+                    }
+                    @pendingOrders
+                </div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon orange-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Order?status=Pending" class="view-details orange-text">Xem Chi Tiết <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Liên Hệ Chưa Đọc</div>
+                <div class="stat-number">@ViewBag.UnreadContacts</div>
+                <div class="stat-icon-container">
+                    <div class="stat-icon red-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="/Admin/Contact?unread=true" class="view-details red-text">Xem Chi Tiết <i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+        <!-- Revenue Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <i class="fas fa-chart-line purple-text"></i>
+                <h5>Biểu Đồ Doanh Thu</h5>
+            </div>
+            <div class="chart-content">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Category Distribution Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <i class="fas fa-chart-pie blue-text"></i>
+                <h5>Phân Bố Danh Mục</h5>
+            </div>
+            <div class="chart-content">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Row -->
+    <div class="tables-row">
+        <!-- Recent Orders Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <i class="fas fa-chart-area blue-text"></i>
+                <h5>Đơn Hàng Gần Đây</h5>
+            </div>
+            <div class="table-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>MÃ ĐH</th>
+                            <th>KHÁCH HÀNG</th>
+                            <th>NGÀY</th>
+                            <th>TỔNG TIỀN</th>
+                            <th>TRẠNG THÁI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+                        {
+                            @foreach (var order in ViewBag.RecentOrders)
+                            {
+                                <tr>
+                                    <td><a href="/Admin/Order/Details/@order.Id">#@order.Id</a></td>
+                                    <td>@order.User.FirstName @order.User.LastName</td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@string.Format("{0:N0} ₫", order.TotalAmount)</td>
+                                    <td>
+                                        @{
+                                            string statusClass = "pending";
+                                            string statusText = "Chờ xử lý";
+
+                                            switch (order.OrderStatus)
+                                            {
+                                                case "Pending":
+                                                    statusClass = "pending";
+                                                    statusText = "Chờ xử lý";
+                                                    break;
+                                                case "Processing":
+                                                    statusClass = "pending";
+                                                    statusText = "Đang xử lý";
+                                                    break;
+                                                case "Shipped":
+                                                    statusClass = "pending";
+                                                    statusText = "Đã gửi hàng";
+                                                    break;
+                                                case "Delivered":
+                                                    statusClass = "delivered";
+                                                    statusText = "Đã giao hàng";
+                                                    break;
+                                                case "Cancelled":
+                                                    statusClass = "cancelled";
+                                                    statusText = "Đã hủy";
+                                                    break;
+                                            }
+                                        }
+                                        <span class="status-badge @statusClass">@statusText</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Không có đơn hàng nào gần đây</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <a href="/Admin/Order" class="view-all-btn">Xem Tất Cả Đơn Hàng</a>
+            </div>
+        </div>
+
+        <!-- Best Selling Products Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <i class="fas fa-fire red-text"></i>
+                <h5>Sản Phẩm Bán Chạy</h5>
+            </div>
+            <div class="table-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>SẢN PHẨM</th>
+                            <th>DANH MỤC</th>
+                            <th>GIÁ</th>
+                            <th>ĐÃ BÁN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            // Tạo danh sách sản phẩm bán chạy từ các đơn hàng
+                            var productSales = new Dictionary<int, int>();
+                            var productDetails = new Dictionary<int, dynamic>();
+
+                            if (ViewBag.RecentOrders != null)
+                            {
+                                foreach (var order in ViewBag.RecentOrders)
+                                {
+                                    if (order.OrderItems != null)
+                                    {
+                                        foreach (var item in order.OrderItems)
+                                        {
+                                            if (!productSales.ContainsKey(item.ProductId))
+                                            {
+                                                productSales[item.ProductId] = 0;
+                                                productDetails[item.ProductId] = item.Product;
+                                            }
+                                            productSales[item.ProductId] += item.Quantity;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Sắp xếp theo số lượng bán giảm dần
+                            var bestSellingProducts = productSales.OrderByDescending(p => p.Value).Take(5);
+
+                            if (bestSellingProducts.Any())
+                            {
+                                foreach (var product in bestSellingProducts)
+                                {
+                                    var productDetail = productDetails[product.Key];
+                                    <tr>
+                                        <td><a href="/Admin/Product/Details/@product.Key">@productDetail.Name</a></td>
+                                        <td>@(productDetail.Category != null ? productDetail.Category.Name : "Không có")</td>
+                                        <td>@string.Format("{0:N0} ₫", productDetail.Price)</td>
+                                        <td><span class="sales-count">@product.Value</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Chưa có dữ liệu bán hàng</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <a href="/Admin/Product" class="view-all-btn">Xem Tất Cả Sản Phẩm</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Products Table -->
+    <div class="table-container">
+        <div class="table-header">
+            <i class="fas fa-chart-bar red-text"></i>
+            <h5>Sản Phẩm Sắp Hết Hàng</h5>
+        </div>
+        <div class="table-content">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>SẢN PHẨM</th>
+                        <th>DANH MỤC</th>
+                        <th>GIÁ</th>
+                        <th>TỒN KHO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.LowStockProducts != null && ViewBag.LowStockProducts.Count > 0)
+                    {
+                        @foreach (var product in ViewBag.LowStockProducts)
+                        {
+                            <tr>
+                                <td><a href="/Admin/Product/Details/@product.Id">@product.Name</a></td>
+                                <td>@(product.Category != null ? product.Category.Name : "Không có")</td>
+                                <td>@string.Format("{0:N0} ₫", product.Price)</td>
+                                <td>
+                                    @if (product.Stock <= 5)
+                                    {
+                                        <span style="color: #e63946; font-weight: bold;">@product.Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #ff9f1c;">@product.Stock</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center">Không có sản phẩm nào sắp hết hàng</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <a href="/Admin/Inventory/Create" class="add-inventory-btn">Nhập Thêm Hàng</a>
+        </div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="notifications-section">
+        <div class="section-header">
+            <i class="fas fa-bell orange-text"></i>
+            <h5>Thông Báo</h5>
+        </div>
+        <div class="notifications-content">
+            @if (ViewBag.UnreadContacts > 0)
+            {
+                <div class="notification-item">
+                    <i class="fas fa-envelope notification-icon"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">Tin nhắn liên hệ mới</div>
+                        <div class="notification-text">Bạn có <strong>@ViewBag.UnreadContacts</strong> tin nhắn liên hệ chưa đọc</div>
+                    </div>
+                    <a href="/Admin/Contact?unread=true" class="notification-action">Xem ngay</a>
+                </div>
+            }
+
+            @if (ViewBag.LowStockProducts != null && ViewBag.LowStockProducts.Count > 0)
+            {
+                <div class="notification-item">
+                    <i class="fas fa-exclamation-triangle notification-icon" style="color: #e63946;"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">Cảnh báo tồn kho</div>
+                        <div class="notification-text">Có <strong>@ViewBag.LowStockProducts.Count</strong> sản phẩm sắp hết hàng</div>
+                    </div>
+                    <a href="/Admin/Inventory/Create" class="notification-action">Nhập hàng</a>
+                </div>
+            }
+
+            @if (pendingOrders > 0)
+            {
+                <div class="notification-item">
+                    <i class="fas fa-shopping-cart notification-icon" style="color: #ff9f1c;"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">Đơn hàng chờ xử lý</div>
+                        <div class="notification-text">Có <strong>@pendingOrders</strong> đơn hàng đang chờ xử lý</div>
+                    </div>
+                    <a href="/Admin/Order?status=Pending" class="notification-action">Xem ngay</a>
+                </div>
+            }
+
+            @if (ViewBag.UnreadContacts == 0 && (ViewBag.LowStockProducts == null || ViewBag.LowStockProducts.Count == 0) && pendingOrders == 0)
+            {
+                <div class="notification-item">
+                    <i class="fas fa-check-circle notification-icon" style="color: #2ec4b6;"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">Không có thông báo mới</div>
+                        <div class="notification-text">Bạn đã xem tất cả thông báo</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Dark Theme Styles */
+    body {
+        background-color: #1a1f2c;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-container {
+        padding: 20px;
+    }
+
+    .dashboard-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .dashboard-subtitle {
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background-color: #242836;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .stat-content {
+        padding: 20px;
+        position: relative;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #a0aec0;
+        margin-bottom: 5px;
+    }
+
+    .stat-number {
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    .stat-icon-container {
+        position: absolute;
+        right: 20px;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .stat-icon i {
+            font-size: 20px;
+            color: white;
+        }
+
+    .blue-icon {
+        background-color: #4361ee;
+    }
+
+    .green-icon {
+        background-color: #2ec4b6;
+    }
+
+    .orange-icon {
+        background-color: #ff9f1c;
+    }
+
+    .red-icon {
+        background-color: #e63946;
+    }
+
+    .purple-icon {
+        background-color: #7209b7;
+    }
+
+    .stat-footer {
+        padding: 10px 20px;
+        border-top: 1px solid #2d3343;
+    }
+
+    .view-details {
+        color: #4361ee;
+        text-decoration: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+    }
+
+        .view-details i {
+            margin-left: 5px;
+        }
+
+    .orange-text {
+        color: #ff9f1c;
+    }
+
+    .blue-text {
+        color: #4361ee;
+    }
+
+    .red-text {
+        color: #e63946;
+    }
+
+    .purple-text {
+        color: #7209b7;
+    }
+
+    /* Charts */
+    .charts-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .chart-container {
+        background-color: #242836;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .chart-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #2d3343;
+    }
+
+        .chart-header i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .chart-header h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+    .chart-content {
+        padding: 20px;
+        height: 300px;
+    }
+
+    /* Tables */
+    .tables-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table-container {
+        background-color: #242836;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .table-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #2d3343;
+    }
+
+        .table-header i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .table-header h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+    .table-content {
+        padding: 0;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 20px;
+            font-weight: 500;
+            font-size: 13px;
+            color: #a0aec0;
+            border-bottom: 1px solid #2d3343;
+        }
+
+        .data-table td {
+            padding: 12px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid #2d3343;
+        }
+
+        .data-table a {
+            color: #4361ee;
+            text-decoration: none;
+        }
+
+            .data-table a:hover {
+                text-decoration: underline;
+            }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .pending {
+        background-color: #ff9f1c;
+        color: #000;
+    }
+
+    .delivered {
+        background-color: #2ec4b6;
+        color: #fff;
+    }
+
+    .cancelled {
+        background-color: #e63946;
+        color: #fff;
+    }
+
+    .sales-count {
+        font-weight: bold;
+        color: #2ec4b6;
+    }
+
+    .table-footer {
+        padding: 15px 20px;
+        text-align: right;
+    }
+
+    .view-all-btn, .add-inventory-btn {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: transparent;
+        color: #4361ee;
+        border: 1px solid #4361ee;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* Notifications */
+    .notifications-section {
+        background-color: #242836;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .section-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #2d3343;
+    }
+
+        .section-header i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .section-header h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+    .notifications-content {
+        padding: 15px 20px;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #2d3343;
+    }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+    .notification-icon {
+        font-size: 20px;
+        color: #ff9f1c;
+        margin-right: 15px;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .notification-text {
+        font-size: 14px;
+        color: #a0aec0;
+    }
+
+    .notification-action {
+        padding: 5px 10px;
+        background-color: #4361ee;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 12px;
+    }
+
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dữ liệu cho biểu đồ doanh thu
+            var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            var revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+                    datasets: [{
+                        label: 'Doanh Thu',
+                        data: [
+        @{
+            // Tạo dữ liệu doanh thu theo tháng
+            var monthlyRevenue = new decimal[6];
+            if (ViewBag.RecentOrders != null)
+            {
+                foreach (var order in ViewBag.RecentOrders)
+                {
+                    int month = order.OrderDate.Month - 1; // Chuyển từ 1-12 sang 0-11
+                    if (month >= 0 && month < 6) // Chỉ lấy 6 tháng gần nhất
+                    {
+                        monthlyRevenue[month] += order.TotalAmount;
+                    }
+                }
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                @monthlyRevenue[i]
+                if (i < 5)
+                {
+                    <text>,</text>
+                }
+            }
+        }
+                        ],
+                        backgroundColor: 'rgba(114, 9, 183, 0.1)',
+                        borderColor: 'rgba(114, 9, 183, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(114, 9, 183, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0',
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Dữ liệu cho biểu đồ phân bố danh mục
+            var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            var categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+        @{
+            // Tạo dữ liệu phân bố danh mục
+            var categoryCount = new Dictionary<string, int>();
+            if (ViewBag.LowStockProducts != null)
+            {
+                foreach (var product in ViewBag.LowStockProducts)
+                {
+                    string categoryName = product.Category != null ? product.Category.Name : "Không có danh mục";
+                    if (!categoryCount.ContainsKey(categoryName))
+                    {
+                        categoryCount[categoryName] = 0;
+                    }
+                    categoryCount[categoryName]++;
+                }
+            }
+
+            int categoryIndex = 0;
+            foreach (var category in categoryCount)
+            {
+                <text>'@category.Key'</text>
+                if (categoryIndex < categoryCount.Count - 1)
+                {
+                    <text>,</text>
+                }
+                categoryIndex++;
+            }
+        }
+                    ],
+                    datasets: [{
+                        data: [
+        @{
+            categoryIndex = 0;
+            foreach (var category in categoryCount)
+            {
+                @category.Value
+                if (categoryIndex < categoryCount.Count - 1)
+                {
+                    <text>,</text>
+                }
+                categoryIndex++;
+            }
+        }
+                        ],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.8)',
+                            'rgba(46, 196, 182, 0.8)',
+                            'rgba(255, 159, 28, 0.8)',
+                            'rgba(230, 57, 70, 0.8)',
+                            'rgba(114, 9, 183, 0.8)'
+                        ],
+                        borderColor: '#242836',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#ffffff',
+                                padding: 10,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + ' sản phẩm';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        });
+    </script>
+}

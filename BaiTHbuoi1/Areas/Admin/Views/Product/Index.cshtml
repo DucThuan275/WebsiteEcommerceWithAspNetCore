@@ -1,0 +1,474 @@
+﻿@model IEnumerable<BaiTHbuoi1.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản Lý Sản Phẩm";
+    var currentPage = ViewData["CurrentPage"] != null ? (int)ViewData["CurrentPage"] : 1;
+    var totalPages = ViewData["TotalPages"] != null ? (int)ViewData["TotalPages"] : 1;
+    var categoryId = ViewData["CategoryId"] as int?;
+    var supplierId = ViewData["SupplierId"] as int?;
+    var searchTerm = ViewData["SearchTerm"] as string ?? "";
+    var sortOrder = ViewData["SortOrder"] as string ?? "";
+    var showInactive = ViewData["ShowInactive"] != null && (bool)ViewData["ShowInactive"];
+    var categories = ViewData["Categories"] as List<BaiTHbuoi1.Models.Category> ?? new List<BaiTHbuoi1.Models.Category>();
+    var suppliers = ViewData["Suppliers"] as List<BaiTHbuoi1.Models.Supplier> ?? new List<BaiTHbuoi1.Models.Supplier>();
+    var totalItems = ViewData["TotalItems"] != null ? ViewData["TotalItems"] : 0;
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Quản Lý Sản Phẩm</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Sản Phẩm</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center">
+            <i class="fas fa-plus me-2"></i> Thêm Sản Phẩm Mới
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 bg-success bg-opacity-25 text-success" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger bg-opacity-25 text-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card bg-dark-subtle text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark border-0 d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-filter me-2"></i>
+                <span class="fw-semibold">Bộ Lọc Sản Phẩm</span>
+            </div>
+            <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                <i class="fas fa-sliders-h me-1"></i> Hiện/Ẩn Bộ Lọc
+            </button>
+        </div>
+        <div class="collapse" id="filterCollapse">
+            <div class="card-body bg-dark-subtle">
+                <form method="get" asp-action="Index" id="filterForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="categoryId" class="form-label text-light">Danh Mục</label>
+                            <select class="form-select form-select-sm bg-dark text-light border-secondary" id="categoryId" name="categoryId">
+                                <option value="">Tất Cả Danh Mục</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Id" selected="@(categoryId == category.Id)">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="supplierId" class="form-label text-light">Nhà Cung Cấp</label>
+                            <select class="form-select form-select-sm bg-dark text-light border-secondary" id="supplierId" name="supplierId">
+                                <option value="">Tất Cả Nhà Cung Cấp</option>
+                                @foreach (var supplier in suppliers)
+                                {
+                                    <option value="@supplier.Id" selected="@(supplierId == supplier.Id)">@supplier.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="searchTerm" class="form-label text-light">Tìm Kiếm</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-dark border-secondary text-light">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" id="searchTerm" name="searchTerm" value="@searchTerm" placeholder="Tên sản phẩm...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="sortOrder" class="form-label text-light">Sắp Xếp Theo</label>
+                            <select class="form-select form-select-sm bg-dark text-light border-secondary" id="sortOrder" name="sortOrder">
+                                <option value="" selected="@(string.IsNullOrEmpty(sortOrder))">Tên (A-Z)</option>
+                                <option value="name_desc" selected="@(sortOrder == "name_desc")">Tên (Z-A)</option>
+                                <option value="price" selected="@(sortOrder == "price")">Giá (Thấp-Cao)</option>
+                                <option value="price_desc" selected="@(sortOrder == "price_desc")">Giá (Cao-Thấp)</option>
+                                <option value="date" selected="@(sortOrder == "date")">Ngày Thêm (Cũ Nhất)</option>
+                                <option value="date_desc" selected="@(sortOrder == "date_desc")">Ngày Thêm (Mới Nhất)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" id="showInactive" name="showInactive" value="true" checked="@showInactive">
+                                <label class="form-check-label text-light" for="showInactive">
+                                    Hiển thị sản phẩm không hoạt động
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-9 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-filter me-1"></i> Áp Dụng Bộ Lọc
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-light btn-sm me-2">
+                                <i class="fas fa-undo me-1"></i> Đặt Lại
+                            </a>
+                            <a href="@Url.Action("ExportToCsv", new { categoryId, supplierId, searchTerm })" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-export me-1"></i> Xuất CSV
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark border-secondary d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-tshirt me-2"></i>
+                <span class="fw-semibold">Danh Sách Sản Phẩm (@Model.Count() / @totalItems)</span>
+            </div>
+            <div class="d-flex">
+                <div class="btn-group btn-group-sm me-2">
+                    <button type="button" class="btn btn-outline-light">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-light active">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cog me-1"></i> Thao Tác
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="bulkActionsDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> Kích Hoạt Đã Chọn</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye-slash me-2"></i> Vô Hiệu Đã Chọn</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i> Xóa Đã Chọn</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead class="bg-dark-subtle text-light">
+                        <tr>
+                            <th class="ps-3" style="width: 40px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAll">
+                                </div>
+                            </th>
+                            <th style="width: 80px">Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Danh Mục</th>
+                            <th>Giá</th>
+                            <th>Tồn Kho</th>
+                            <th>Trạng Thái</th>
+                            <th style="width: 150px" class="text-end pe-3">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(!item.IsActive ? "table-secondary bg-opacity-10" : "")">
+                                <td class="ps-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="@item.Id">
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <div class="position-relative">
+                                            <img src="@item.ImageUrl" alt="@item.Name" class="rounded" style="width: 60px; height: 60px; object-fit: cover;" />
+                                            @if (item.IsOnSale)
+                                            {
+                                                <span class="position-absolute top-0 start-0 badge bg-danger rounded-pill" style="transform: translate(-30%, -30%)">
+                                                    Sale
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-dark-subtle d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-tshirt text-light-50 fa-lg"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-semibold text-light">@item.Name</div>
+                                    <small class="text-light-50">Mã: #@item.Id</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark-subtle text-light">@(item.Category?.Name ?? "N/A")</span>
+                                    @if (item.Supplier != null)
+                                    {
+                                        <br />
+
+                                        <small class="text-light-50">@item.Supplier.Name</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.DiscountPrice.HasValue && item.IsOnSale)
+                                    {
+                                        <div class="text-danger fw-bold">@item.DiscountPrice.Value.ToString("N0") ₫</div>
+                                        <small class="text-decoration-line-through text-light-50">@item.Price.ToString("N0") ₫</small>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-light">@item.Price.ToString("N0") ₫</div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Stock <= 5)
+                                    {
+                                        <span class="badge bg-danger">@item.Stock</span>
+                                    }
+                                    else if (item.Stock <= 20)
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@item.Stock</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        @if (!item.IsActive)
+                                        {
+                                            <span class="badge bg-secondary">Không Hoạt Động</span>
+                                        }
+                                        @if (item.IsFeatured)
+                                        {
+                                            <span class="badge bg-primary">Nổi Bật</span>
+                                        }
+                                        @if (item.IsNewArrival)
+                                        {
+                                            <span class="badge bg-info text-dark">Mới Về</span>
+                                        }
+                                        @if (item.IsOnSale)
+                                        {
+                                            <span class="badge bg-danger">Giảm Giá</span>
+                                        }
+                                        @if (item.IsBestSeller)
+                                        {
+                                            <span class="badge bg-success">Bán Chạy</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-light" data-bs-toggle="tooltip" title="Chỉnh Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info" data-bs-toggle="tooltip" title="Chi Tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="visually-hidden">Thêm</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                                            <li>
+                                                <form asp-action="ToggleActive" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="dropdown-item">
+                                                        @if (item.IsActive)
+                                                        {
+                                                            <i class="fas fa-eye-slash me-2"></i>
+
+                                                            <span>Vô Hiệu Hóa</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-eye me-2"></i>
+
+                                                            <span>Kích Hoạt</span>
+                                                        }
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleFlag" asp-route-id="@item.Id" asp-route-property="IsFeatured" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="dropdown-item">
+                                                        @if (item.IsFeatured)
+                                                        {
+                                                            <i class="fas fa-star me-2"></i>
+
+                                                            <span>Bỏ Nổi Bật</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="far fa-star me-2"></i>
+
+                                                            <span>Đánh Dấu Nổi Bật</span>
+                                                        }
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleFlag" asp-route-id="@item.Id" asp-route-property="IsNewArrival" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="dropdown-item">
+                                                        @if (item.IsNewArrival)
+                                                        {
+                                                            <i class="fas fa-tag me-2"></i>
+
+                                                            <span>Bỏ Mới Về</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-tag me-2"></i>
+
+                                                            <span>Đánh Dấu Mới Về</span>
+                                                        }
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleFlag" asp-route-id="@item.Id" asp-route-property="IsOnSale" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="dropdown-item">
+                                                        @if (item.IsOnSale)
+                                                        {
+                                                            <i class="fas fa-percent me-2"></i>
+
+                                                            <span>Bỏ Giảm Giá</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-percent me-2"></i>
+
+                                                            <span>Đánh Dấu Giảm Giá</span>
+                                                        }
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleFlag" asp-route-id="@item.Id" asp-route-property="IsBestSeller" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="dropdown-item">
+                                                        @if (item.IsBestSeller)
+                                                        {
+                                                            <i class="fas fa-award me-2"></i>
+
+                                                            <span>Bỏ Bán Chạy</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-award me-2"></i>
+
+                                                            <span>Đánh Dấu Bán Chạy</span>
+                                                        }
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item text-danger">
+                                                    <i class="fas fa-trash me-2"></i> Xóa
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info bg-dark bg-opacity-50 text-info border-info text-center my-4 mx-3">
+                    <i class="fas fa-info-circle me-2"></i> Không tìm thấy sản phẩm nào phù hợp với tiêu chí tìm kiếm.
+                </div>
+            }
+
+            @if (totalPages > 1)
+            {
+                <div class="d-flex justify-content-between align-items-center p-3 border-top border-secondary">
+                    <div class="text-light-50">
+                        Hiển thị <span class="fw-semibold">@Model.Count()</span> trên tổng số <span class="fw-semibold">@totalItems</span> sản phẩm
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <a class="page-link bg-dark text-light border-secondary" href="@Url.Action("Index", new { page = 1, categoryId, supplierId, searchTerm, sortOrder, showInactive })" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <a class="page-link bg-dark text-light border-secondary" href="@Url.Action("Index", new { page = currentPage - 1, categoryId, supplierId, searchTerm, sortOrder, showInactive })" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            @{
+                                int startPage = Math.Max(1, currentPage - 2);
+                                int endPage = Math.Min(totalPages, startPage + 4);
+
+                                if (endPage - startPage < 4)
+                                {
+                                    startPage = Math.Max(1, endPage - 4);
+                                }
+                            }
+
+                            @for (int i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link @(i == currentPage ? "bg-primary" : "bg-dark") text-light border-secondary" href="@Url.Action("Index", new { page = i, categoryId, supplierId, searchTerm, sortOrder, showInactive })">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link bg-dark text-light border-secondary" href="@Url.Action("Index", new { page = currentPage + 1, categoryId, supplierId, searchTerm, sortOrder, showInactive })" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link bg-dark text-light border-secondary" href="@Url.Action("Index", new { page = totalPages, categoryId, supplierId, searchTerm, sortOrder, showInactive })" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Tự động ẩn thông báo sau 5 giây
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+
+            // Hiển thị bộ lọc nếu có bất kỳ bộ lọc nào được áp dụng
+            if ('@categoryId' || '@supplierId' || '@searchTerm' || '@sortOrder' || '@showInactive' === 'True') {
+                $('#filterCollapse').addClass('show');
+            }
+
+            // Xử lý chọn tất cả
+            $('#selectAll').change(function() {
+                $('tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+            });
+        });
+    </script>
+}

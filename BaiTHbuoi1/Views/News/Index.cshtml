@@ -1,0 +1,562 @@
+﻿@model IEnumerable<BaiTHbuoi1.Models.News>
+
+@{
+    ViewData["Title"] = "Tin tức";
+}
+
+<style>
+    :root {
+        --primary-color: #00c07f;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .news-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .news-header {
+        margin-bottom: 2rem;
+    }
+
+    .news-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .news-subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .news-tabs {
+        display: flex;
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 2rem;
+    }
+
+    .news-tab {
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .news-tab.active {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .news-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary-color);
+    }
+
+    .featured-news {
+        position: relative;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .featured-news-img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .featured-news-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        color: white;
+    }
+
+    .featured-news-category {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+
+    .featured-news-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .featured-news-meta {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .featured-news-meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    .featured-news-meta-item i {
+        margin-right: 0.25rem;
+    }
+
+    .news-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .news-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .news-card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .news-card-content {
+        padding: 1.5rem;
+    }
+
+    .news-card-category {
+        display: inline-block;
+        background-color: rgba(0, 192, 127, 0.1);
+        color: var(--primary-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+
+    .news-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .news-card-title a {
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
+    .news-card-title a:hover {
+        color: var(--primary-color);
+    }
+
+    .news-card-excerpt {
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .news-card-meta {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .news-card-meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    .news-card-meta-item i {
+        margin-right: 0.25rem;
+    }
+
+    .news-list-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .news-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .news-list-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #e0e0e0;
+        margin-right: 1rem;
+        min-width: 40px;
+    }
+
+    .news-list-content {
+        flex-grow: 1;
+    }
+
+    .news-list-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .news-list-title a {
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
+    .news-list-title a:hover {
+        color: var(--primary-color);
+    }
+
+    .news-list-meta {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .news-list-meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    .news-list-meta-item i {
+        margin-right: 0.25rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+    }
+
+    .pagination {
+        margin-top: 2rem;
+    }
+
+    .page-link {
+        color: var(--text-color);
+        border: none;
+        margin: 0 0.25rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 500;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .page-item.disabled .page-link {
+        color: #dee2e6;
+    }
+
+    .search-box {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-right: 3rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .search-box button {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+    }
+</style>
+
+<div class="container news-container">
+    <div class="news-header">
+        <h1 class="news-title">Tin tức & Cập nhật</h1>
+        <p class="news-subtitle">Khám phá những thông tin mới nhất về sản phẩm và dịch vụ của chúng tôi</p>
+    </div>
+
+    <div class="news-tabs">
+        <div class="news-tab active">Tất cả</div>
+        <div class="news-tab">Sản phẩm mới</div>
+        <div class="news-tab">Khuyến mãi</div>
+        <div class="news-tab">Hướng dẫn</div>
+        <div class="news-tab">Sự kiện</div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" placeholder="Tìm kiếm bài viết...">
+        <button type="button"><i class="fas fa-search"></i></button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-newspaper fa-2x mb-3"></i>
+            <h4>Chưa có bài viết nào</h4>
+            <p class="mb-0">Vui lòng quay lại sau để xem những bài viết mới nhất từ chúng tôi.</p>
+        </div>
+    }
+    else
+    {
+        var featuredNews = Model.FirstOrDefault();
+
+        @if (featuredNews != null)
+        {
+            <div class="featured-news">
+                <img src="@(string.IsNullOrEmpty(featuredNews.ImageUrl) ? "/images/placeholder.jpg" : featuredNews.ImageUrl)" 
+                     alt="@featuredNews.Title" class="featured-news-img">
+                <div class="featured-news-content">
+                    <div class="featured-news-category">Nổi bật</div>
+                    <h2 class="featured-news-title">@featuredNews.Title</h2>
+                    <div class="featured-news-meta">
+                        <div class="featured-news-meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>@(string.IsNullOrEmpty(featuredNews.Author) ? "Admin" : featuredNews.Author)</span>
+                        </div>
+                        <div class="featured-news-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>@featuredNews.PublishDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="featured-news-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>5 phút đọc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="section-title">Bài viết mới nhất</h3>
+                
+                <div class="row">
+                    @foreach (var news in Model.Skip(1).Take(6))
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="news-card">
+                                <img src="@(string.IsNullOrEmpty(news.ImageUrl) ? "/images/placeholder.jpg" : news.ImageUrl)" 
+                                     alt="@news.Title" class="news-card-img">
+                                <div class="news-card-content">
+                                    <div class="news-card-category">Tin tức</div>
+                                    <h3 class="news-card-title">
+                                        <a asp-controller="News" asp-action="Details" asp-route-id="@news.Id">@news.Title</a>
+                                    </h3>
+                                    <p class="news-card-excerpt">
+                                        @(news.Content.Length > 120 ? news.Content.Substring(0, 120) + "..." : news.Content)
+                                    </p>
+                                    <div class="news-card-meta">
+                                        <div class="news-card-meta-item">
+                                            <i class="fas fa-user"></i>
+                                            <span>@(string.IsNullOrEmpty(news.Author) ? "Admin" : news.Author)</span>
+                                        </div>
+                                        <div class="news-card-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>@news.PublishDate.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (ViewBag.TotalPages > 1)
+                {
+                    <nav aria-label="Điều hướng trang">
+                        <ul class="pagination justify-content-center">
+                            @if (ViewBag.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       asp-controller="News"
+                                       asp-action="Index"
+                                       asp-route-page="@(ViewBag.CurrentPage - 1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link"
+                                       asp-controller="News"
+                                       asp-action="Index"
+                                       asp-route-page="@i">@i</a>
+                                </li>
+                            }
+
+                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       asp-controller="News"
+                                       asp-action="Index"
+                                       asp-route-page="@(ViewBag.CurrentPage + 1)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <h3 class="section-title">Phổ biến</h3>
+                
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        @foreach (var news in Model.Take(5).Select((value, i) => new { i, value }))
+                        {
+                            <div class="news-list-item">
+                                <div class="news-list-number">@(news.i + 1)</div>
+                                <div class="news-list-content">
+                                    <h4 class="news-list-title">
+                                        <a asp-controller="News" asp-action="Details" asp-route-id="@news.value.Id">@news.value.Title</a>
+                                    </h4>
+                                    <div class="news-list-meta">
+                                        <div class="news-list-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>@news.value.PublishDate.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                        <div class="news-list-meta-item">
+                                            <i class="fas fa-clock"></i>
+                                            <span>@(news.i + 3) phút đọc</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="mb-3">Đăng ký nhận tin</h4>
+                        <p class="text-muted mb-3">Nhận thông báo về các bài viết mới nhất và khuyến mãi đặc biệt.</p>
+                        <form>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Email của bạn" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-3">Danh mục</h4>
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Sản phẩm mới
+                                <span class="badge bg-primary rounded-pill">12</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Khuyến mãi
+                                <span class="badge bg-primary rounded-pill">8</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Hướng dẫn
+                                <span class="badge bg-primary rounded-pill">15</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Sự kiện
+                                <span class="badge bg-primary rounded-pill">6</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Công nghệ
+                                <span class="badge bg-primary rounded-pill">9</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tab switching
+            $('.news-tab').click(function() {
+                $('.news-tab').removeClass('active');
+                $(this).addClass('active');
+                // Here you would typically filter content based on the selected tab
+            });
+        });
+    </script>
+}

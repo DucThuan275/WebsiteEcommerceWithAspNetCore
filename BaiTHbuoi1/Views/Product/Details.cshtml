@@ -1,0 +1,730 @@
+﻿@model BaiTHbuoi1.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<style>
+    /* Estilos generales */
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #333;
+        background-color: #fff;
+    }
+
+    /* Navegación de migas de pan */
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0.75rem 0;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .breadcrumb-item a {
+        color: #666;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: #333;
+    }
+
+    /* Contenedor principal */
+    .product-container {
+        margin-bottom: 4rem;
+    }
+
+    /* Pestañas de navegación */
+    .product-tabs {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 2rem;
+    }
+
+        .product-tabs .nav-link {
+            color: #666;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            background-color: transparent;
+            margin-right: 1.5rem;
+        }
+
+            .product-tabs .nav-link.active {
+                color: #333;
+                border-bottom: 2px solid #333;
+                font-weight: 600;
+            }
+
+    /* Galería de imágenes */
+    .product-gallery {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .product-main-image {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .product-thumbnails {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .product-thumbnail {
+        width: 70px;
+        height: 70px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 3px;
+        transition: all 0.2s;
+    }
+
+        .product-thumbnail:hover, .product-thumbnail.active {
+            border-color: #333;
+        }
+
+        .product-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+    /* Información del producto */
+    .product-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .price-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .current-price {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #e74c3c;
+        margin-right: 0.75rem;
+    }
+
+    .original-price {
+        font-size: 1rem;
+        color: #999;
+        text-decoration: line-through;
+    }
+
+    .new-badge {
+        background-color: #e74c3c;
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        margin-left: 0.75rem;
+    }
+
+    /* Selectores */
+    .product-options {
+        margin-bottom: 1.5rem;
+    }
+
+    .option-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .color-options {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .color-option {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid #dee2e6;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .color-option:hover, .color-option.active {
+            transform: scale(1.1);
+            border: 2px solid #333;
+        }
+
+    .color-pink {
+        background-color: #f8bbd0;
+    }
+
+    .color-gray {
+        background-color: #cfd8dc;
+    }
+
+    .color-beige {
+        background-color: #f5f5dc;
+    }
+
+    .size-options {
+        margin-bottom: 1.5rem;
+    }
+
+    .size-dropdown {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        background-color: white;
+    }
+
+    /* Cantidad y botones */
+    .quantity-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 0.5rem;
+        margin: 0 0.5rem;
+    }
+
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dee2e6;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .add-to-cart-btn {
+        flex: 1;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+        .add-to-cart-btn:hover {
+            background-color: #1a252f;
+        }
+
+    .favorite-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border: 1px solid #dee2e6;
+        background-color: white;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+        .favorite-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+    /* Información de envío */
+    .delivery-info {
+        margin-bottom: 2rem;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1.5rem;
+    }
+
+    .delivery-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .delivery-option {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .delivery-type {
+        color: #666;
+    }
+
+    .delivery-time {
+        color: #999;
+    }
+
+    .delivery-price {
+        font-weight: 500;
+    }
+
+    /* Información de devolución */
+    .return-info {
+        margin-bottom: 2rem;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1.5rem;
+    }
+
+    .return-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .return-text {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Compartir */
+    .share-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .share-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-right: 1rem;
+    }
+
+    .share-icons {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .share-icon {
+        color: #666;
+        transition: all 0.2s;
+    }
+
+        .share-icon:hover {
+            color: #333;
+        }
+
+    /* Métodos de pago */
+    .payment-methods {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+    }
+
+    .payment-method {
+        height: 24px;
+    }
+
+    /* Suscripción */
+    .subscribe-section {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: 4rem;
+    }
+
+    .subscribe-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .subscribe-text h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .subscribe-text p {
+        color: #666;
+        margin-bottom: 0;
+    }
+
+    .subscribe-form {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .subscribe-input {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        width: 250px;
+    }
+
+    .subscribe-btn {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container product-container">
+    <!-- Breadcrumb navigation -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+            @if (Model.Category != null)
+            {
+                <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a></li>
+            }
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Título del producto para móviles -->
+    <div class="d-block d-md-none mb-4">
+        <h1 class="product-title">@Model.Name</h1>
+    </div>
+
+    <!-- Pestañas de navegación -->
+    <ul class="nav product-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="#general-info">Thông tin chung</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#product-details">Chi tiết sản phẩm</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#reviews">Đánh giá</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <!-- Galería de imágenes -->
+        <div class="col-md-6 mb-4">
+            <div class="product-gallery">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="product-main-image" alt="@Model.Name" id="main-product-image">
+                }
+                else
+                {
+                    <img src="/images/placeholder.jpg" class="product-main-image" alt="@Model.Name" id="main-product-image">
+                }
+
+                <!-- Miniaturas de imágenes -->
+                <div class="product-thumbnails">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="product-thumbnail active" data-image="@Model.ImageUrl">
+                            <img src="@Model.ImageUrl" alt="@Model.Name">
+                        </div>
+                    }
+
+                    <!-- Imágenes adicionales (simuladas) -->
+                    <div class="product-thumbnail" data-image="@Model.ImageUrl">
+                        <img src="@Model.ImageUrl" alt="@Model.Name - Vista frontal">
+                    </div>
+                    <div class="product-thumbnail" data-image="@Model.ImageUrl">
+                        <img src="@Model.ImageUrl" alt="@Model.Name - Vista lateral">
+                    </div>
+                    <div class="product-thumbnail" data-image="@Model.ImageUrl">
+                        <img src="@Model.ImageUrl" alt="@Model.Name - Vista trasera">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del producto -->
+        <div class="col-md-6">
+            <!-- Título del producto para desktop -->
+            <div class="d-none d-md-block">
+                <h1 class="product-title">@Model.Name</h1>
+            </div>
+
+            <!-- Precio -->
+            <div class="price-container">
+                @if (Model.DiscountPrice.HasValue && Model.DiscountPrice.Value < Model.Price)
+                {
+                    <span class="current-price">@Model.DiscountPrice.Value.ToString("N0")₫</span>
+                    <span class="original-price">@Model.Price.ToString("N0")₫</span>
+
+                    @if (Model.IsNewArrival)
+                    {
+                        <span class="new-badge">NEW</span>
+                    }
+                }
+                else
+                {
+                    <span class="current-price">@Model.Price.ToString("N0")₫</span>
+
+                    @if (Model.IsNewArrival)
+                    {
+                        <span class="new-badge">NEW</span>
+                    }
+                }
+            </div>
+
+            <!-- Opciones de color -->
+            <div class="product-options">
+                <div class="option-label">Màu sắc</div>
+                <div class="color-options">
+                    <div class="color-option color-pink active" title="Hồng"></div>
+                    <div class="color-option color-gray" title="Xám"></div>
+                    <div class="color-option color-beige" title="Be"></div>
+                </div>
+            </div>
+
+            <!-- Opciones de talla -->
+            <div class="product-options">
+                <div class="option-label">Kích thước</div>
+                <div class="size-options">
+                    <select class="size-dropdown">
+                        <option value="" disabled selected>Chọn kích thước</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Selector de cantidad -->
+            <div class="product-options">
+                <div class="option-label">Số lượng</div>
+                <div class="quantity-container">
+                    <button class="quantity-btn" id="decrease-quantity">-</button>
+                    <input type="number" class="quantity-input" id="quantity" name="quantity" value="1" min="1" max="@Model.Stock">
+                    <button class="quantity-btn" id="increase-quantity">+</button>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                @if (Model.Stock > 0)
+                {
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100">
+                        <input type="hidden" name="productId" value="@Model.Id">
+                        <input type="hidden" name="quantity" id="quantity-hidden" value="1">
+                        <button type="submit" class="add-to-cart-btn">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <button class="add-to-cart-btn" disabled>
+                        Tạm hết hàng
+                    </button>
+                }
+                <button class="favorite-btn">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+
+            <!-- Información de envío -->
+            <div class="delivery-info">
+                <div class="delivery-title">Giao hàng</div>
+                <div class="delivery-option">
+                    <span class="delivery-type">Giao hàng tiêu chuẩn</span>
+                    <span class="delivery-time">3-5 ngày làm việc</span>
+                    <span class="delivery-price">30.000₫</span>
+                </div>
+                <div class="delivery-option">
+                    <span class="delivery-type">Giao hàng nhanh</span>
+                    <span class="delivery-time">1-2 ngày làm việc</span>
+                    <span class="delivery-price">50.000₫</span>
+                </div>
+                <div class="delivery-option">
+                    <span class="delivery-type">Nhận tại cửa hàng</span>
+                    <span class="delivery-time">1-3 ngày làm việc</span>
+                    <span class="delivery-price">Miễn phí</span>
+                </div>
+            </div>
+
+            <!-- Información de devolución -->
+            <div class="return-info">
+                <div class="return-title">Đổi trả</div>
+                <p class="return-text">Bạn có 30 ngày để đổi trả sản phẩm với một trong các phương thức sau:</p>
+                <ul class="return-text">
+                    <li>Đổi trả miễn phí tại cửa hàng</li>
+                    <li>Đổi trả qua đường bưu điện</li>
+                </ul>
+            </div>
+
+            <!-- Compartir -->
+            <div class="share-container">
+                <span class="share-label">Chia sẻ:</span>
+                <div class="share-icons">
+                    <a href="#" class="share-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="share-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="share-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+
+            <!-- Métodos de pago -->
+            <div class="payment-methods">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" class="payment-method">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="MasterCard" class="payment-method">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196565.png" alt="PayPal" class="payment-method">
+            </div>
+        </div>
+    </div>
+
+    <!-- Descripción del producto -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Mô tả sản phẩm</h3>
+            <div class="product-description">
+                @Html.Raw(Model.Description)
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos relacionados -->
+    @if (ViewBag.RelatedProducts != null && ((List<BaiTHbuoi1.Models.Product>)ViewBag.RelatedProducts).Count > 0)
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Sản phẩm liên quan</h3>
+                <div class="row">
+                    @foreach (var product in (List<BaiTHbuoi1.Models.Product>)ViewBag.RelatedProducts)
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <a asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "/images/placeholder.jpg")"
+                                         class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title" style="font-size: 1rem; font-weight: 500;">@product.Name</h5>
+                                        <div class="mt-2">
+                                            @if (product.DiscountPrice.HasValue && product.DiscountPrice.Value < product.Price)
+                                            {
+                                                <span class="text-muted text-decoration-line-through me-2">
+                                                    @product.Price.ToString("N0")₫
+                                                </span>
+                                                <span class="text-danger fw-bold">
+                                                    @product.DiscountPrice.Value.ToString("N0")₫
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fw-bold">@product.Price.ToString("N0")₫</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Sección de suscripción -->
+<div class="subscribe-section">
+    <div class="container">
+        <div class="subscribe-container">
+            <div class="subscribe-text">
+                <h3>Đăng ký nhận thông tin</h3>
+                <p>Đăng ký để nhận thông tin khuyến mãi và sản phẩm mới</p>
+            </div>
+            <div class="subscribe-form">
+                <input type="email" class="subscribe-input" placeholder="Nhập địa chỉ email">
+                <button class="subscribe-btn">Đăng ký</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejo de miniaturas
+        const thumbnails = document.querySelectorAll('.product-thumbnail');
+        const mainImage = document.getElementById('main-product-image');
+
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                // Eliminar clase active de todas las miniaturas
+                thumbnails.forEach(t => t.classList.remove('active'));
+
+                // Añadir clase active a la miniatura seleccionada
+                this.classList.add('active');
+
+                // Actualizar imagen principal
+                const imageUrl = this.getAttribute('data-image');
+                mainImage.src = imageUrl;
+            });
+        });
+
+        // Manejo de cantidad
+        const quantityInput = document.getElementById('quantity');
+        const quantityHidden = document.getElementById('quantity-hidden');
+        const decreaseBtn = document.getElementById('decrease-quantity');
+        const increaseBtn = document.getElementById('increase-quantity');
+
+        decreaseBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                value--;
+                quantityInput.value = value;
+                if (quantityHidden) quantityHidden.value = value;
+            }
+        });
+
+        increaseBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            const max = parseInt(quantityInput.getAttribute('max'));
+            if (value < max) {
+                value++;
+                quantityInput.value = value;
+                if (quantityHidden) quantityHidden.value = value;
+            }
+        });
+
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            const max = parseInt(this.getAttribute('max'));
+
+            if (isNaN(value) || value < 1) {
+                value = 1;
+            } else if (value > max) {
+                value = max;
+            }
+
+            this.value = value;
+            if (quantityHidden) quantityHidden.value = value;
+        });
+
+        // Manejo de opciones de color
+        const colorOptions = document.querySelectorAll('.color-option');
+
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>

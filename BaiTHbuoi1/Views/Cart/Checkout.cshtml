@@ -1,0 +1,586 @@
+﻿@model BaiTHbuoi1.Models.Order
+@inject Microsoft.AspNetCore.Identity.UserManager<BaiTHbuoi1.Models.ApplicationUser> _userManager
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<style>
+    :root {
+        --primary-color: #333;
+        --secondary-color: #f8f9fa;
+        --accent-color: #007bff;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .checkout-header {
+        margin-bottom: 2rem;
+    }
+
+    .checkout-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .checkout-subtitle {
+        color: var(--text-muted);
+    }
+
+    .checkout-section {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .checkout-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-method {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        transition: all 0.2s;
+    }
+
+        .payment-method:hover {
+            border-color: var(--accent-color);
+        }
+
+        .payment-method.active {
+            border-color: var(--accent-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+    .payment-method-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .payment-method-description {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-bottom: 0;
+    }
+
+    .order-summary {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        position: sticky;
+        top: 1rem;
+    }
+
+    .order-summary-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .order-summary-label {
+        color: var(--text-muted);
+    }
+
+    .order-summary-value {
+        font-weight: 500;
+    }
+
+    .order-summary-total {
+        border-top: 1px solid #eee;
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    .order-summary-total-label {
+        font-weight: 600;
+    }
+
+    .order-summary-total-value {
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+
+    .btn-place-order {
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        padding: 0.75rem 0;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+        .btn-place-order:hover {
+            background-color: #0069d9;
+        }
+
+    .checkout-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .checkout-step {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 25%;
+    }
+
+        .checkout-step:not(:last-child)::after {
+            background-color: var(--border-color);
+            content: '';
+            height: 2px;
+            position: absolute;
+            right: -50%;
+            top: 1rem;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .checkout-step.active:not(:last-child)::after {
+            background-color: var(--accent-color);
+        }
+
+    .checkout-step-icon {
+        align-items: center;
+        background-color: #fff;
+        border: 2px solid var(--border-color);
+        border-radius: 50%;
+        color: var(--text-muted);
+        display: flex;
+        font-size: 1rem;
+        height: 2.5rem;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        position: relative;
+        width: 2.5rem;
+        z-index: 2;
+    }
+
+    .checkout-step.active .checkout-step-icon {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+
+    .checkout-step.completed .checkout-step-icon {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+
+    .checkout-step-label {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .checkout-step.active .checkout-step-label {
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .promo-code-input {
+        display: flex;
+    }
+
+        .promo-code-input .form-control {
+            border-radius: 4px 0 0 4px;
+        }
+
+        .promo-code-input .btn {
+            border-radius: 0 4px 4px 0;
+        }
+
+    .order-item {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .order-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .order-item-title {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-item-meta {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+
+    .order-item-price {
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .order-item-quantity {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        text-align: right;
+    }
+</style>
+
+<div class="container checkout-container">
+    <div class="checkout-header">
+        <h1 class="checkout-title">Thanh toán an toàn</h1>
+        <p class="checkout-subtitle">Powered by Vercel</p>
+    </div>
+
+    <div class="checkout-steps">
+        <div class="checkout-step completed">
+            <div class="checkout-step-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="checkout-step-label">Giỏ hàng</div>
+        </div>
+        <div class="checkout-step active">
+            <div class="checkout-step-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <div class="checkout-step-label">Giao hàng</div>
+        </div>
+        <div class="checkout-step">
+            <div class="checkout-step-icon">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="checkout-step-label">Thanh toán</div>
+        </div>
+        <div class="checkout-step">
+            <div class="checkout-step-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="checkout-step-label">Xác nhận</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-action="Checkout" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <input type="hidden" asp-for="UserId" value="@_userManager.GetUserId(User)" />
+                }
+
+                <!-- Shipping Information -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Thông tin giao hàng</h3>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ShippingName" class="form-label">Họ và tên</label>
+                            <input asp-for="ShippingName" class="form-control" placeholder="Nhập họ và tên người nhận" />
+                            <span asp-validation-for="ShippingName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ShippingPhone" class="form-label">Số điện thoại</label>
+                            <input asp-for="ShippingPhone" class="form-control" placeholder="Nhập số điện thoại liên hệ" />
+                            <span asp-validation-for="ShippingPhone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ShippingAddress" class="form-label">Địa chỉ</label>
+                        <input asp-for="ShippingAddress" class="form-control" placeholder="Số nhà, tên đường, phường/xã" />
+                        <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="ShippingCity" class="form-label">Thành phố</label>
+                            <input asp-for="ShippingCity" class="form-control" placeholder="Nhập thành phố" />
+                            <span asp-validation-for="ShippingCity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="ShippingPostalCode" class="form-label">Mã bưu điện</label>
+                            <input asp-for="ShippingPostalCode" class="form-control" placeholder="Nhập mã bưu điện" />
+                            <span asp-validation-for="ShippingPostalCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="ShippingCountry" class="form-label">Quốc gia</label>
+                            <select asp-for="ShippingCountry" class="form-select">
+                                <option value="Việt Nam">Việt Nam</option>
+                                <option value="United States">United States</option>
+                                <option value="Germany">Germany</option>
+                                <option value="France">France</option>
+                                <option value="Japan">Japan</option>
+                            </select>
+                            <span asp-validation-for="ShippingCountry" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Method -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Phương thức vận chuyển</h3>
+
+                    <div class="payment-method active">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ShippingMethod" id="standard" value="Standard" checked>
+                            <label class="form-check-label w-100" for="standard">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="payment-method-title">Tiêu chuẩn</div>
+                                        <div class="payment-method-description">Giao hàng trong 4-6 tuần</div>
+                                    </div>
+                                    <div>Miễn phí</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ShippingMethod" id="express" value="Express">
+                            <label class="form-check-label w-100" for="express">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="payment-method-title">Nhanh</div>
+                                        <div class="payment-method-description">Giao hàng trong 8-10 ngày làm việc</div>
+                                    </div>
+                                    <div>150.000₫</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ShippingMethod" id="priority" value="Priority">
+                            <label class="form-check-label w-100" for="priority">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="payment-method-title">Ưu tiên</div>
+                                        <div class="payment-method-description">Giao hàng trong 3-5 ngày làm việc</div>
+                                    </div>
+                                    <div>250.000₫</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Phương thức thanh toán</h3>
+
+                    <div class="payment-method active">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="Credit Card" checked>
+                            <label class="form-check-label w-100" for="creditCard">
+                                <div class="payment-method-title">Thẻ tín dụng</div>
+                                <div class="payment-method-description">Thanh toán an toàn với thẻ tín dụng của bạn</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="paypal" value="PayPal">
+                            <label class="form-check-label w-100" for="paypal">
+                                <div class="payment-method-title">PayPal</div>
+                                <div class="payment-method-description">Thanh toán an toàn với tài khoản PayPal của bạn</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="Cash on Delivery">
+                            <label class="form-check-label w-100" for="cod">
+                                <div class="payment-method-title">Thanh toán khi nhận hàng (COD)</div>
+                                <div class="payment-method-description">Thanh toán khi bạn nhận được hàng</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Ghi chú đơn hàng</h3>
+
+                    <div class="mb-3">
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Ghi chú về đơn hàng của bạn..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-place-order">
+                        Tiếp tục
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="order-summary">
+                <h3 class="order-summary-title">Đơn hàng của bạn</h3>
+
+                @{
+                    var cart = new List<BaiTHbuoi1.Controllers.CartItem>();
+                    var cartJson = Context.Session.GetString("Cart");
+                    if (!string.IsNullOrEmpty(cartJson))
+                    {
+                        cart = System.Text.Json.JsonSerializer.Deserialize<List<BaiTHbuoi1.Controllers.CartItem>>(cartJson) ?? new List<BaiTHbuoi1.Controllers.CartItem>();
+                    }
+
+                    decimal subtotal = 0;
+                    decimal shipping = 0;
+                    decimal tax = 0;
+                }
+
+                @if (cart.Any())
+                {
+                    <!-- Order Items -->
+                    <div class="mb-4">
+                        @foreach (var item in cart)
+                        {
+                            subtotal += item.Subtotal;
+
+                            <div class="order-item">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/placeholder.jpg" : item.ImageUrl)"
+                                             alt="@item.ProductName" class="order-item-image">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="order-item-title">@item.ProductName</div>
+                                        <div class="order-item-meta">Phân loại: Mặc định</div>
+                                    </div>
+                                    <div class="ms-3">
+                                        <div class="order-item-price">@item.Price.ToString("N0")₫</div>
+                                        <div class="order-item-quantity">x@(item.Quantity)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="mb-4">
+                        <div class="promo-code-input">
+                            <input type="text" class="form-control" placeholder="Mã giảm giá">
+                            <button type="button" class="btn btn-outline-secondary">Áp dụng</button>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="order-summary-row">
+                        <span class="order-summary-label">Tạm tính</span>
+                        <span class="order-summary-value">@subtotal.ToString("N0")₫</span>
+                    </div>
+
+                    <div class="order-summary-row">
+                        <span class="order-summary-label">Phí vận chuyển</span>
+                        <span class="order-summary-value">@shipping.ToString("N0")₫</span>
+                    </div>
+
+                    <div class="order-summary-row">
+                        <span class="order-summary-label">Thuế</span>
+                        <span class="order-summary-value">@tax.ToString("N0")₫</span>
+                    </div>
+
+                    <div class="order-summary-row order-summary-total">
+                        <span class="order-summary-total-label">Tổng cộng</span>
+                        <span class="order-summary-total-value">@((subtotal + shipping + tax).ToString("N0"))₫</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Giỏ hàng của bạn đang trống.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function() {
+            // Payment method selection
+            $('.payment-method').click(function() {
+                const radioInput = $(this).find('input[type="radio"]');
+
+                // If clicking on the same group (shipping or payment)
+                const name = radioInput.attr('name');
+                $(`input[name="${name}"]`).closest('.payment-method').removeClass('active');
+
+                $(this).addClass('active');
+                radioInput.prop('checked', true);
+            });
+
+            // Auto format phone number
+            $('#ShippingPhone').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    </script>
+}

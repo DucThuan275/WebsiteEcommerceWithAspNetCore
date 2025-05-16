@@ -1,0 +1,290 @@
+﻿@model BaiTHbuoi1.Models.Product
+
+@{
+    ViewData["Title"] = "Chi Tiết Sản Phẩm";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Chi Tiết Sản Phẩm</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Sản Phẩm</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Chi Tiết</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit me-1"></i> Chỉnh Sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Quay Lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card bg-dark text-light border-0 shadow-sm h-100">
+                <div class="card-header bg-dark border-secondary py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-image me-2"></i>
+                        <span class="fw-semibold">Hình Ảnh Sản Phẩm</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;" />
+
+                            @if (Model.IsOnSale)
+                            {
+                                <div class="position-absolute top-0 start-0 bg-danger text-white py-2 px-3 m-3">
+                                    <span class="fw-bold">GIẢM GIÁ</span>
+                                    @if (Model.DiscountPrice.HasValue)
+                                    {
+                                        <div class="small">-@(Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100))%</div>
+                                    }
+                                </div>
+                            }
+
+                            @if (Model.IsNewArrival)
+                            {
+                                <div class="position-absolute top-0 end-0 bg-info text-dark py-2 px-3 m-3">
+                                    <span class="fw-bold">MỚI VỀ</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="bg-dark-subtle d-flex align-items-center justify-content-center" style="height: 400px;">
+                                <div class="text-center">
+                                    <i class="fas fa-tshirt fa-5x text-light-50 mb-3"></i>
+                                    <p class="text-light-50">Chưa có hình ảnh</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="card-footer bg-dark border-secondary py-3">
+                        <button class="btn btn-sm btn-outline-light w-100">
+                            <i class="fas fa-download me-1"></i> Tải Hình Ảnh
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-8 mb-4">
+            <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark border-secondary py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span class="fw-semibold">Thông Tin Sản Phẩm</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h2 class="fs-3 fw-bold mb-4">@Model.Name</h2>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Giá Bán</h5>
+                                @if (Model.DiscountPrice.HasValue && Model.IsOnSale)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <h4 class="text-danger fw-bold mb-0 me-2">@Model.DiscountPrice.Value.ToString("N0") ₫</h4>
+                                        <span class="text-decoration-line-through text-light-50">@Model.Price.ToString("N0") ₫</span>
+                                    </div>
+                                    <div class="badge bg-danger mt-2">Giảm @(Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100))%</div>
+                                }
+                                else
+                                {
+                                    <h4 class="fw-bold">@Model.Price.ToString("N0") ₫</h4>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Tồn Kho</h5>
+                                @if (Model.Stock <= 5)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-danger me-2">@Model.Stock</span>
+                                        <span class="text-danger">Sắp hết hàng</span>
+                                    </div>
+                                }
+                                else if (Model.Stock <= 20)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-warning text-dark me-2">@Model.Stock</span>
+                                        <span class="text-warning">Còn ít</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success me-2">@Model.Stock</span>
+                                        <span class="text-success">Còn hàng</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Danh Mục</h5>
+                                <span class="badge bg-dark-subtle text-light px-3 py-2">@(Model.Category?.Name ?? "Chưa phân loại")</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Nhà Cung Cấp</h5>
+                                <span class="badge bg-dark-subtle text-light px-3 py-2">@(Model.Supplier?.Name ?? "Không có")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-light-50 fs-6 mb-2">Mô Tả Sản Phẩm</h5>
+                        <div class="bg-dark-subtle p-3 rounded">
+                            @if (string.IsNullOrEmpty(Model.Description))
+                            {
+                                <p class="text-light-50 mb-0">Chưa có mô tả cho sản phẩm này</p>
+                            }
+                            else
+                            {
+                                <p class="mb-0">@Model.Description</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Ngày Tạo</h5>
+                                <div class="d-flex align-items-center">
+                                    <i class="far fa-calendar-alt me-2 text-light-50"></i>
+                                    <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="text-light-50 fs-6 mb-2">Cập Nhật Lần Cuối</h5>
+                                <div class="d-flex align-items-center">
+                                    <i class="far fa-clock me-2 text-light-50"></i>
+                                    <span>@(Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa cập nhật")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5 class="text-light-50 fs-6 mb-2">Trạng Thái</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary") px-3 py-2">
+                                <i class="fas @(Model.IsActive ? "fa-check-circle" : "fa-times-circle") me-1"></i>
+                                @(Model.IsActive ? "Đang Hoạt Động" : "Không Hoạt Động")
+                            </span>
+                            @if (Model.IsFeatured)
+                            {
+                                <span class="badge bg-primary px-3 py-2">
+                                    <i class="fas fa-star me-1"></i> Sản Phẩm Nổi Bật
+                                </span>
+                            }
+                            @if (Model.IsNewArrival)
+                            {
+                                <span class="badge bg-info text-dark px-3 py-2">
+                                    <i class="fas fa-tag me-1"></i> Hàng Mới Về
+                                </span>
+                            }
+                            @if (Model.IsOnSale)
+                            {
+                                <span class="badge bg-danger px-3 py-2">
+                                    <i class="fas fa-percent me-1"></i> Đang Giảm Giá
+                                </span>
+                            }
+                            @if (Model.IsBestSeller)
+                            {
+                                <span class="badge bg-success px-3 py-2">
+                                    <i class="fas fa-award me-1"></i> Bán Chạy Nhất
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.OrderItems != null && Model.OrderItems.Any())
+            {
+                <div class="card bg-dark text-light border-0 shadow-sm">
+                    <div class="card-header bg-dark border-secondary py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            <span class="fw-semibold">Lịch Sử Đơn Hàng</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0">
+                                <thead class="bg-dark-subtle text-light">
+                                    <tr>
+                                        <th class="ps-3">Mã Đơn Hàng</th>
+                                        <th>Ngày Đặt</th>
+                                        <th>Số Lượng</th>
+                                        <th>Đơn Giá</th>
+                                        <th class="text-end pe-3">Thành Tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="border-top-0">
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td class="ps-3">
+                                                <a href="#" class="text-info text-decoration-none">#@item.OrderId</a>
+                                            </td>
+                                            <td>@(item.Order?.OrderDate.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.UnitPrice.ToString("N0") ₫</td>
+                                            <td class="text-end pe-3 fw-bold">@((item.UnitPrice * item.Quantity).ToString("N0")) ₫</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class="bg-dark-subtle text-light">
+                                    <tr>
+                                        <td colspan="3" class="ps-3">Tổng cộng</td>
+                                        <td class="text-end">@Model.OrderItems.Count() đơn hàng</td>
+                                        <td class="text-end pe-3 fw-bold">@Model.OrderItems.Sum(i => i.UnitPrice * i.Quantity).ToString("N0") ₫</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-2">
+        <a asp-action="Index" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-1"></i> Quay Lại Danh Sách
+        </a>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                <i class="fas fa-edit me-1"></i> Chỉnh Sửa
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                <i class="fas fa-trash me-1"></i> Xóa
+            </a>
+        </div>
+    </div>
+</div>

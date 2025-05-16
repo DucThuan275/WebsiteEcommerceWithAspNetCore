@@ -1,0 +1,84 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Custom styles */
+.product-img {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+    .product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+.card:hover .product-img img {
+    transform: scale(1.05);
+}
+
+.category-img {
+    height: 150px;
+    overflow: hidden;
+}
+
+    .category-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.product-image-container {
+    max-height: 500px;
+    overflow: hidden;
+}
+
+    .product-image-container img {
+        width: 100%;
+        object-fit: contain;
+    }
+
+.social-icons a {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+    .social-icons a:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+}

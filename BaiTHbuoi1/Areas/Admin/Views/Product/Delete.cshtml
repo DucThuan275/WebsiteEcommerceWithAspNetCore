@@ -1,0 +1,186 @@
+﻿@model BaiTHbuoi1.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa Sản Phẩm";
+    var hasOrders = ViewData["HasOrders"] != null && (bool)ViewData["HasOrders"];
+    var orderCount = ViewData["OrderCount"] != null ? (int)ViewData["OrderCount"] : 0;
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Xóa Sản Phẩm</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Sản Phẩm</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show bg-danger bg-opacity-25 border-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-danger text-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span class="fw-semibold">Xác Nhận Xóa Sản Phẩm</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i> Cảnh Báo!</h4>
+                <p>Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể hoàn tác.</p>
+            </div>
+
+            @if (hasOrders)
+            {
+                <div class="alert alert-warning bg-warning bg-opacity-25 border-warning text-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Lưu ý:</strong> Sản phẩm này đã có @orderCount đơn hàng liên quan.
+                    Việc xóa sản phẩm có thể ảnh hưởng đến lịch sử đơn hàng và báo cáo.
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" />
+
+                            @if (Model.IsOnSale)
+                            {
+                                <div class="position-absolute top-0 start-0 bg-danger text-white py-1 px-2 m-2">
+                                    <span class="small fw-bold">GIẢM GIÁ</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="bg-dark-subtle d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <i class="fas fa-tshirt fa-5x text-light-50"></i>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h2 class="fs-3 fw-bold mb-3">@Model.Name</h2>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Mã Sản Phẩm:</div>
+                        <div class="col-sm-9 fw-semibold">#@Model.Id</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Danh Mục:</div>
+                        <div class="col-sm-9">@(Model.Category?.Name ?? "Chưa phân loại")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Nhà Cung Cấp:</div>
+                        <div class="col-sm-9">@(Model.Supplier?.Name ?? "Không có")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Giá Bán:</div>
+                        <div class="col-sm-9">
+                            @if (Model.DiscountPrice.HasValue && Model.IsOnSale)
+                            {
+                                <span class="text-danger me-2 fw-semibold">@Model.DiscountPrice.Value.ToString("N0") ₫</span>
+                                <span class="text-decoration-line-through text-light-50">@Model.Price.ToString("N0") ₫</span>
+                            }
+                            else
+                            {
+                                <span class="fw-semibold">@Model.Price.ToString("N0") ₫</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Tồn Kho:</div>
+                        <div class="col-sm-9">@Model.Stock</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 text-light-50">Trạng Thái:</div>
+                        <div class="col-sm-9">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary") px-3 py-2">
+                                    <i class="fas @(Model.IsActive ? "fa-check-circle" : "fa-times-circle") me-1"></i>
+                                    @(Model.IsActive ? "Đang Hoạt Động" : "Không Hoạt Động")
+                                </span>
+                                @if (Model.IsFeatured)
+                                {
+                                    <span class="badge bg-primary px-3 py-2">
+                                        <i class="fas fa-star me-1"></i> Nổi Bật
+                                    </span>
+                                }
+                                @if (Model.IsNewArrival)
+                                {
+                                    <span class="badge bg-info text-dark px-3 py-2">
+                                        <i class="fas fa-tag me-1"></i> Mới Về
+                                    </span>
+                                }
+                                @if (Model.IsOnSale)
+                                {
+                                    <span class="badge bg-danger px-3 py-2">
+                                        <i class="fas fa-percent me-1"></i> Giảm Giá
+                                    </span>
+                                }
+                                @if (Model.IsBestSeller)
+                                {
+                                    <span class="badge bg-success px-3 py-2">
+                                        <i class="fas fa-award me-1"></i> Bán Chạy
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+
+                @if (hasOrders)
+                {
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="forceDelete" name="forceDelete" value="true">
+                        <label class="form-check-label" for="forceDelete">
+                            Tôi hiểu rằng sản phẩm này đã có đơn hàng và vẫn muốn xóa
+                        </label>
+                    </div>
+                }
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger" @(hasOrders ? "id='deleteButton' disabled" : "")>
+                        <i class="fas fa-trash me-1"></i> Xóa Sản Phẩm
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (hasOrders)
+    {
+        <script>
+            $(document).ready(function() {
+                $('#forceDelete').change(function() {
+                    if($(this).is(':checked')) {
+                        $('#deleteButton').prop('disabled', false);
+                    } else {
+                        $('#deleteButton').prop('disabled', true);
+                    }
+                });
+            });
+        </script>
+    }
+}

@@ -1,0 +1,242 @@
+﻿@model BaiTHbuoi1.Controllers.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --primary-color: #3f51b5;
+        --primary-light: #757de8;
+        --primary-dark: #002984;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --text-muted: #6c757d;
+    }
+
+    .register-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-left {
+        background-color: #2c3e50;
+        color: white;
+        padding: 0;
+        position: relative;
+        height: 100%;
+    }
+
+    .register-left-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 30px;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 500px;
+    }
+
+    .register-left-logo {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .register-left-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .register-left-text {
+        font-size: 16px;
+        margin-bottom: 30px;
+        opacity: 0.8;
+    }
+
+    .register-right {
+        padding: 40px;
+    }
+
+    .register-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .register-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.3s ease;
+    }
+
+        .register-close:hover {
+            background-color: #e9ecef;
+            color: var(--text-color);
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        height: 45px;
+        border-radius: 8px;
+        border: 1px solid #e1e1e1;
+        padding: 10px 15px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+            border-color: var(--primary-light);
+        }
+
+    .btn-register {
+        height: 45px;
+        border-radius: 8px;
+        background-color: var(--primary-color);
+        border: none;
+        font-weight: 600;
+        padding: 0 20px;
+    }
+
+        .btn-register:hover {
+            background-color: var(--primary-dark);
+        }
+
+    .register-footer {
+        margin-top: 20px;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+        .register-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .register-footer a:hover {
+                text-decoration: underline;
+            }
+
+    .form-text {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+   
+</style>
+
+<div class="container register-container">
+    <div class="row g-0">
+        <!-- Columna izquierda - Imagen y texto -->
+        <div class="col-md-5 register-left">
+            <div class="register-left-content">
+                <div class="register-left-logo">VDUCKTIE FASHION</div>
+                <h1 class="register-left-title">Tham gia cùng chúng tôi</h1>
+                <p class="register-left-text">Đăng ký tài khoản để trải nghiệm mua sắm tuyệt vời và nhận nhiều ưu đãi hấp dẫn.</p>
+            </div>
+        </div>
+
+        <!-- Columna derecha - Formulario de registro -->
+        <div class="col-md-7 register-right">
+            <div class="register-title">
+                <span>Đăng Ký</span>
+                <a href="/" class="register-close">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+
+            <form asp-controller="Account" asp-action="Register" method="post">
+                <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label">Họ</label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Nhập họ của bạn" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label">Tên</label>
+                        <input asp-for="LastName" class="form-control" placeholder="Nhập tên của bạn" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control" placeholder="example@gmail.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="09xxxxxxxx" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label">Mật khẩu</label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="Nhập mật khẩu" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Nhập lại mật khẩu" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                    <label class="form-check-label" for="termsCheck">
+                        Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo mật</a>
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="btn btn-outline-secondary">
+                        Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-register">TẠO TÀI KHOẢN</button>
+                </div>
+            </form>
+
+            <div class="register-footer">
+                <p>Đã có tài khoản? <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">Đăng nhập ngay</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

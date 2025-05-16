@@ -1,0 +1,97 @@
+﻿@model BaiTHbuoi1.Models.Slider
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Slider";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Chỉnh Sửa Slider</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Sliders</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Chỉnh Sửa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-edit me-2"></i>
+                <span class="fw-semibold">Chỉnh Sửa Thông Tin Slider</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label text-light-50">Tiêu Đề</label>
+                            <input asp-for="Title" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Subtitle" class="form-label text-light-50">Tiêu Đề Phụ</label>
+                            <input asp-for="Subtitle" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="Subtitle" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LinkUrl" class="form-label text-light-50">Đường Dẫn</label>
+                            <input asp-for="LinkUrl" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="LinkUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DisplayOrder" class="form-label text-light-50">Thứ Tự Hiển Thị</label>
+                            <input asp-for="DisplayOrder" class="form-control bg-dark text-light border-secondary" />
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="IsActive" />
+                            <label class="form-check-label text-light-50" asp-for="IsActive">Kích Hoạt</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-light-50">Hình Ảnh Hiện Tại</label>
+                            <div class="border border-secondary p-2 rounded mb-3">
+                                <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid" style="max-height: 200px;" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-light-50">Hình Ảnh Mới (để trống nếu giữ nguyên)</label>
+                            <input type="file" name="imageFile" class="form-control bg-dark text-light border-secondary" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu Thay Đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-1"></i> Quay Lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

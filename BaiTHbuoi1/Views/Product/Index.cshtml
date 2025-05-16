@@ -1,0 +1,948 @@
+﻿@using System.Linq
+@model IEnumerable<BaiTHbuoi1.Models.Product>
+
+@{
+    ViewData["Title"] = "Sản Phẩm";
+
+    // Add these null checks to avoid the runtime binding exception
+    bool showSale = ViewBag.ShowSale != null && (bool)ViewBag.ShowSale;
+    bool showNew = ViewBag.ShowNew != null && (bool)ViewBag.ShowNew;
+
+    // Define the media variable that's missing in the context
+    var media = ViewBag.Media ?? new List<object>();
+}
+<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #212529;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #212529;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .category-item {
+            display: block;
+            padding: 8px 0;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+            .category-item:hover, .category-item.active {
+                color: #00c07f;
+                transform: translateX(5px);
+            }
+
+            .category-item i {
+                margin-right: 8px;
+                width: 20px;
+                text-align: center;
+            }
+
+        /* Color Filter */
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+            .color-option:hover, .color-option.active {
+                transform: scale(1.1);
+                border-color: #00c07f;
+            }
+
+        .color-white {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+
+        .color-black {
+            background-color: #212529;
+        }
+
+        .color-gray {
+            background-color: #adb5bd;
+        }
+
+        .color-beige {
+            background-color: #e9d8a6;
+        }
+
+        .color-green {
+            background-color: #588157;
+        }
+
+        .color-red {
+            background-color: #e63946;
+        }
+
+        .color-blue {
+            background-color: #457b9d;
+        }
+
+        .color-purple {
+            background-color: #7209b7;
+        }
+
+        .color-teal {
+            background-color: #2a9d8f;
+        }
+
+        .color-brown {
+            background-color: #774936;
+        }
+
+        .color-pink {
+            background-color: #00c07f;
+        }
+
+        /* Price Range */
+        .price-range {
+            margin-bottom: 20px;
+        }
+
+        .range-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .price-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+            .price-inputs span {
+                font-size: 0.9rem;
+                color: #6c757d;
+            }
+
+        /* Rating Filter */
+        .rating-options {
+            margin-bottom: 15px;
+        }
+
+        .rating-option {
+            display: block;
+            padding: 5px 0;
+            color: #495057;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+            .rating-option:hover {
+                color: #00c07f;
+            }
+
+        .rating-stars {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+
+        /* Product Card */
+        .product-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            height: 100%;
+            overflow: hidden;
+            border: none;
+        }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+        .product-img {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+            .product-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s;
+            }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .badge-sale {
+            background-color: #00c07f;
+            color: white;
+        }
+
+        .badge-new {
+            background-color: #20c997;
+            color: white;
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #495057;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+            .action-btn:hover {
+                background-color: #00c07f;
+                color: white;
+            }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #212529;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 48px;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #00c07f;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-right: 5px;
+        }
+
+        .add-to-cart {
+            background-color: #00c07f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            .add-to-cart:hover {
+                background-color: #66D6A6;
+                transform: translateY(-2px);
+            }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding-right: 40px;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 40px;
+            background: transparent;
+            border: none;
+            color: #6c757d;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 30px;
+        }
+
+        .page-link {
+            color: #00c07f;
+            border-radius: 4px;
+            margin: 0 3px;
+        }
+
+        .page-item.active .page-link {
+            background-color: #00c07f;
+            border-color: #00c07f;
+        }
+
+        /* Filter Tags */
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #495057;
+            transition: all 0.2s;
+        }
+
+            .filter-tag:hover {
+                background-color: #e9ecef;
+            }
+
+            .filter-tag i {
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+        /* Mobile Adjustments */
+        @media (max-width: 767.98px) {
+            .sidebar-container
+
+        {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            height: 100%;
+            background-color: white;
+            z-index: 1050;
+            transition: all 0.3s;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar-container.show {
+            left: 0;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
+        }
+
+            .sidebar-backdrop.show {
+                display: block;
+            }
+
+        }
+    </style>
+    <div class="container py-4 mt-0">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                @if (!string.IsNullOrEmpty(ViewBag.CategoryName))
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.CategoryName</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item active">Sản phẩm</li>
+                }
+            </ol>
+        </nav>
+
+        <!-- Mobile Filter Button -->
+        <div class="d-md-none mb-3">
+            <button class="btn btn-outline-primary w-100" id="show-filter-btn">
+                <i class="fas fa-filter me-2"></i> Lọc Sản Phẩm
+            </button>
+        </div>
+
+        <!-- Search for "Chairs" -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">
+                @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+                {
+                    <span>Tìm kiếm: "@ViewBag.SearchString"</span>
+                }
+                else if (!string.IsNullOrEmpty(ViewBag.CategoryName))
+                {
+                    <span>@ViewBag.CategoryName</span>
+                }
+                else
+                {
+                    <span>Tất cả sản phẩm</span>
+                }
+            </h4>
+            <div class="d-flex align-items-center">
+                <select class="form-select form-select-sm" id="sort-select" onchange="changeSort(this.value)">
+                    <option value="newest">Mới nhất</option>
+                    <option value="price-asc">Giá thấp đến cao</option>
+                    <option value="price-desc">Giá cao đến thấp</option>
+                    <option value="name-asc">Tên A-Z</option>
+                    <option value="name-desc">Tên Z-A</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Filter Tags -->
+        @if (!string.IsNullOrEmpty(ViewBag.SearchString) || ViewBag.CategoryId != null || ViewBag.MinPrice != null || ViewBag.MaxPrice != null || showSale || showNew)
+        {
+            <div class="filter-tags mb-3">
+                @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+                {
+                    <span class="filter-tag">
+                        Từ khóa: @ViewBag.SearchString
+                        <a href="@Url.Action("Index", new { categoryId = ViewBag.CategoryId, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                @if (ViewBag.CategoryId != null)
+                {
+                    <span class="filter-tag">
+                        Danh mục: @ViewBag.CategoryName
+                        <a href="@Url.Action("Index", new { searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                @if (ViewBag.MinPrice != null)
+                {
+                    <span class="filter-tag">
+                        Giá từ: @string.Format("{0:N0}đ", ViewBag.MinPrice)
+                        <a href="@Url.Action("Index", new { categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                @if (ViewBag.MaxPrice != null)
+                {
+                    <span class="filter-tag">
+                        Giá đến: @string.Format("{0:N0}đ", ViewBag.MaxPrice)
+                        <a href="@Url.Action("Index", new { categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                @if (showSale)
+                {
+                    <span class="filter-tag">
+                        Sản phẩm giảm giá
+                        <a href="@Url.Action("Index", new { categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showNew = showNew ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                @if (showNew)
+                {
+                    <span class="filter-tag">
+                        Sản phẩm mới
+                        <a href="@Url.Action("Index", new { categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null })">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    </span>
+                }
+
+                <a href="@Url.Action("Index")" class="filter-tag">
+                    <i class="fas fa-trash-alt me-1"></i> Xóa bộ lọc
+                </a>
+            </div>
+        }
+
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar-container" id="sidebar-container">
+                    <div class="d-md-none d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Bộ lọc</h5>
+                        <button class="btn-close" id="close-sidebar-btn"></button>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="sidebar mb-4">
+                        <h5 class="sidebar-title">Danh Mục</h5>
+                        <a href="@Url.Action("Index", new { searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })"
+                           class="category-item @(ViewBag.CategoryId == null ? "active" : "")">
+                            <i class="fas fa-th-large"></i> Tất Cả Sản Phẩm
+                        </a>
+                        @if (ViewBag.Categories != null)
+                        {
+                            foreach (var category in ViewBag.Categories)
+                            {
+                                <a href="@Url.Action("Index", new { categoryId = category.Id, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })"
+                                   class="category-item @(ViewBag.CategoryId == category.Id ? "active" : "")">
+                                    <i class="fas fa-tag"></i> @category.Name
+                                </a>
+                            }
+                        }
+                    </div>
+
+                    <!-- Search -->
+                    <div class="sidebar mb-4">
+                        <h5 class="sidebar-title">Tìm Kiếm</h5>
+                        <form asp-action="Index" method="get">
+                            <div class="search-box">
+                                <input type="text" class="form-control search-input" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập từ khóa...">
+                                <button type="submit" class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            @if (ViewBag.CategoryId != null)
+                            {
+                                <input type="hidden" name="categoryId" value="@ViewBag.CategoryId">
+                            }
+                            @if (ViewBag.MinPrice != null)
+                            {
+                                <input type="hidden" name="minPrice" value="@ViewBag.MinPrice">
+                            }
+                            @if (ViewBag.MaxPrice != null)
+                            {
+                                <input type="hidden" name="maxPrice" value="@ViewBag.MaxPrice">
+                            }
+                            @if (showSale)
+                            {
+                                <input type="hidden" name="showSale" value="true">
+                            }
+                            @if (showNew)
+                            {
+                                <input type="hidden" name="showNew" value="true">
+                            }
+                        </form>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="sidebar mb-4">
+                        <h5 class="sidebar-title">Bộ Lọc</h5>
+
+                        <!-- Color Filter -->
+                        <div class="mb-3">
+                            <h6 class="mb-2">Màu Sắc</h6>
+                            <div class="color-options">
+                                <div class="color-option color-white" title="Trắng"></div>
+                                <div class="color-option color-black" title="Đen"></div>
+                                <div class="color-option color-gray" title="Xám"></div>
+                                <div class="color-option color-beige" title="Be"></div>
+                                <div class="color-option color-green" title="Xanh lá"></div>
+                                <div class="color-option color-red" title="Đỏ"></div>
+                                <div class="color-option color-blue" title="Xanh dương"></div>
+                                <div class="color-option color-purple" title="Tím"></div>
+                                <div class="color-option color-teal" title="Xanh ngọc"></div>
+                                <div class="color-option color-brown" title="Nâu"></div>
+                                <div class="color-option color-pink" title="Hồng"></div>
+                            </div>
+                        </div>
+
+                        <!-- Price Filter -->
+                        <div class="mb-3">
+                            <h6 class="mb-2">Giá</h6>
+                            <form asp-action="Index" method="get" id="price-filter-form">
+                                <input type="range" class="form-range range-slider" id="price-range" min="0" max="2000000" step="100000">
+                                <div class="price-inputs">
+                                    <span id="min-price-display">0đ</span>
+                                    <span id="max-price-display">2.000.000đ</span>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <input type="number" class="form-control form-control-sm" id="min-price" name="minPrice" value="@ViewBag.MinPrice" placeholder="Từ">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control form-control-sm" id="max-price" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Đến">
+                                    </div>
+                                </div>
+                                @if (ViewBag.CategoryId != null)
+                                {
+                                    <input type="hidden" name="categoryId" value="@ViewBag.CategoryId">
+                                }
+                                @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+                                {
+                                    <input type="hidden" name="searchString" value="@ViewBag.SearchString">
+                                }
+                                @if (showSale)
+                                {
+                                    <input type="hidden" name="showSale" value="true">
+                                }
+                                @if (showNew)
+                                {
+                                    <input type="hidden" name="showNew" value="true">
+                                }
+                                <button type="submit" class="btn btn-sm btn-primary w-100 mt-2">Áp dụng</button>
+                            </form>
+                        </div>
+
+                        <!-- Rating Filter -->
+                        <div class="mb-3">
+                            <h6 class="mb-2">Đánh Giá</h6>
+                            <div class="rating-options">
+                                <div class="rating-option">
+                                    <span class="rating-stars">★★★★★</span> 5 sao
+                                </div>
+                                <div class="rating-option">
+                                    <span class="rating-stars">★★★★</span>★ 4 sao trở lên
+                                </div>
+                                <div class="rating-option">
+                                    <span class="rating-stars">★★★</span>★★ 3 sao trở lên
+                                </div>
+                                <div class="rating-option">
+                                    <span class="rating-stars">★★</span>★★★ 2 sao trở lên
+                                </div>
+                                <div class="rating-option">
+                                    <span class="rating-stars">★</span>★★★★ 1 sao trở lên
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="mb-3">
+                            <h6 class="mb-2">Trạng Thái</h6>
+                            <form id="status-filter-form">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="sale-filter" @(showSale ? "checked" : "")>
+                                    <label class="form-check-label" for="sale-filter">
+                                        Sản phẩm giảm giá
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="new-filter" @(showNew ? "checked" : "")>
+                                    <label class="form-check-label" for="new-filter">
+                                        Sản phẩm mới
+                                    </label>
+                                </div>
+                                <input type="hidden" id="current-category" value="@ViewBag.CategoryId">
+                                <input type="hidden" id="current-search" value="@ViewBag.SearchString">
+                                <input type="hidden" id="current-min-price" value="@ViewBag.MinPrice">
+                                <input type="hidden" id="current-max-price" value="@ViewBag.MaxPrice">
+                                <button type="button" class="btn btn-sm btn-primary w-100 mt-2" id="apply-status-filter">Áp dụng</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+            </div>
+
+            <!-- Products -->
+            <div class="col-md-9">
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Không tìm thấy sản phẩm phù hợp.
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-3">Tìm thấy @ViewBag.TotalItems sản phẩm</p>
+                    <div class="row">
+                        @foreach (var product in Model)
+                        {
+                            <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+                                <div class="product-card">
+                                    <div class="product-img">
+                                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                        {
+                                            <img src="@product.ImageUrl" alt="@product.Name">
+                                        }
+                                        else
+                                        {
+                                            <img src="/images/placeholder.jpg" alt="@product.Name">
+                                        }
+
+                                        @if (product.IsNewArrival)
+                                        {
+                                            <span class="product-badge badge-new">Mới</span>
+                                        }
+                                        else if (product.IsOnSale && product.DiscountPrice.HasValue)
+                                        {
+                                            <span class="product-badge badge-sale">-@(Math.Round((1 - product.DiscountPrice.Value / product.Price) * 100))%</span>
+                                        }
+
+                                        <div class="product-actions">
+                                            <a href="@Url.Action("Details", new { id = product.Id })" class="action-btn" title="Xem chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="action-btn" title="Thêm vào yêu thích">
+                                                <i class="far fa-heart"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <h5 class="product-title">@product.Name</h5>
+                                        @if (product.Category != null)
+                                        {
+                                            <small class="text-muted">@product.Category.Name</small>
+                                        }
+
+                                        <div class="product-price">
+                                            @if (product.DiscountPrice.HasValue)
+                                            {
+                                                <span class="price-original">@string.Format("{0:N0}đ", product.Price)</span>
+                                                <span>@string.Format("{0:N0}đ", product.DiscountPrice.Value)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@string.Format("{0:N0}đ", product.Price)</span>
+                                            }
+                                        </div>
+
+                                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                            <input type="hidden" name="productId" value="@product.Id">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="add-to-cart">
+                                                <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    @if (ViewBag.TotalPages > 1)
+                    {
+                        <nav aria-label="Page navigation" class="my-4">
+                            <ul class="pagination justify-content-center">
+                                @if (ViewBag.CurrentPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                    </li>
+                                }
+
+                                @{
+                                    const int MAX_VISIBLE_PAGES = 5;
+                                    var startPage = Math.Max(1, ViewBag.CurrentPage - MAX_VISIBLE_PAGES / 2);
+                                    var endPage = Math.Min(ViewBag.TotalPages, startPage + MAX_VISIBLE_PAGES - 1);
+
+                                    for (int i = startPage; i <= endPage; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("Index", new { page = i, categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">@i</a>
+                                        </li>
+                                    }
+                                }
+
+                                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, categoryId = ViewBag.CategoryId, searchString = ViewBag.SearchString, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, showSale = showSale ? true : (bool?)null, showNew = showNew ? true : (bool?)null })">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        document.getElementById('show-filter-btn')?.addEventListener('click', function() {
+            document.getElementById('sidebar-container').classList.add('show');
+            document.getElementById('sidebar-backdrop').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        document.getElementById('close-sidebar-btn')?.addEventListener('click', function() {
+            document.getElementById('sidebar-container').classList.remove('show');
+            document.getElementById('sidebar-backdrop').classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        document.getElementById('sidebar-backdrop')?.addEventListener('click', function() {
+            document.getElementById('sidebar-container').classList.remove('show');
+            document.getElementById('sidebar-backdrop').classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        // Price range slider
+        const priceRange = document.getElementById('price-range');
+        if (priceRange) {
+            const minPriceInput = document.getElementById('min-price');
+            const maxPriceInput = document.getElementById('max-price');
+            const minPriceDisplay = document.getElementById('min-price-display');
+            const maxPriceDisplay = document.getElementById('max-price-display');
+
+            // Initialize with values from inputs
+            const minPrice = parseInt(minPriceInput.value) || 0;
+            const maxPrice = parseInt(maxPriceInput.value) || 2000000;
+
+            priceRange.value = maxPrice / 2; // Set initial value
+
+            // Update display on input change
+            priceRange.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                maxPriceInput.value = value;
+                maxPriceDisplay.textContent = formatCurrency(value);
+            });
+
+            // Update display on page load
+            minPriceDisplay.textContent = formatCurrency(minPrice);
+            maxPriceDisplay.textContent = formatCurrency(maxPrice);
+        }
+
+        // Apply status filter
+        document.getElementById('apply-status-filter')?.addEventListener('click', function() {
+            const url = new URL(window.location);
+
+            const showSale = document.getElementById('sale-filter').checked;
+            const showNew = document.getElementById('new-filter').checked;
+            const categoryId = document.getElementById('current-category').value;
+            const searchString = document.getElementById('current-search').value;
+            const minPrice = document.getElementById('current-min-price').value;
+            const maxPrice = document.getElementById('current-max-price').value;
+
+            // Clear existing params
+            url.searchParams.delete('showSale');
+            url.searchParams.delete('showNew');
+
+            // Add new params
+            if (showSale) url.searchParams.set('showSale', 'true');
+            if (showNew) url.searchParams.set('showNew', 'true');
+            if (categoryId) url.searchParams.set('categoryId', categoryId);
+            if (searchString) url.searchParams.set('searchString', searchString);
+            if (minPrice) url.searchParams.set('minPrice', minPrice);
+            if (maxPrice) url.searchParams.set('maxPrice', maxPrice);
+
+            window.location = url;
+        });
+
+        // Sort products
+        function changeSort(value) {
+            const url = new URL(window.location);
+            url.searchParams.set('sort', value);
+            window.location = url;
+        }
+
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                maximumFractionDigits: 0
+            }).format(value).replace('₫', 'đ');
+        }
+
+        // Set sort value from URL on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortValue = urlParams.get('sort');
+            if (sortValue && document.getElementById('sort-select')) {
+                document.getElementById('sort-select').value = sortValue;
+            }
+
+            // Color filter selection
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>

@@ -1,0 +1,666 @@
+﻿@model BaiTHbuoi1.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<style>
+    :root {
+        --primary-color: #00c07f;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .order-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .order-detail-header {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .order-detail-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-detail-subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .order-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .order-card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .order-card-body {
+        padding: 1.25rem;
+    }
+
+    .order-info-item {
+        margin-bottom: 1rem;
+    }
+
+    .order-info-label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-info-value {
+        font-weight: 500;
+    }
+
+    .order-status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+        .order-status-badge.pending {
+            background-color: #fff8e1;
+            color: #f57c00;
+        }
+
+        .order-status-badge.processing {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-status-badge.shipped {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .order-status-badge.delivered {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .order-status-badge.cancelled {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+    .order-product {
+        display: flex;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid #eee;
+    }
+
+        .order-product:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+    .order-product-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 1rem;
+    }
+
+    .order-product-info {
+        flex-grow: 1;
+    }
+
+    .order-product-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-product-meta {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-product-price {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .order-summary-label {
+        color: var(--text-muted);
+    }
+
+    .order-summary-value {
+        font-weight: 500;
+    }
+
+    .order-summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .order-summary-total-label {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .order-summary-total-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+    }
+
+    .order-timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+        .order-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 7px;
+            height: 100%;
+            width: 2px;
+            background-color: #e0e0e0;
+        }
+
+    .order-timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+        .order-timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+    .order-timeline-icon {
+        position: absolute;
+        left: -2rem;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid #e0e0e0;
+        z-index: 1;
+    }
+
+        .order-timeline-icon.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+    .order-timeline-content {
+        padding-bottom: 0.5rem;
+    }
+
+    .order-timeline-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-timeline-date {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-order-action {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-order-back {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        color: var(--text-color);
+    }
+
+        .btn-order-back:hover {
+            background-color: #f8f9fa;
+        }
+
+    .btn-order-track {
+        background-color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        color: white;
+    }
+
+        .btn-order-track:hover {
+            background-color: #00a86b;
+        }
+
+    .btn-order-cancel {
+        background-color: white;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+    }
+
+        .btn-order-cancel:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+    .delivery-info-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .delivery-info-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .delivery-info-text {
+        color: var(--text-muted);
+        margin-bottom: 0;
+    }
+
+   
+</style>
+
+<div class="container order-detail-container">
+    <div class="order-detail-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Order" asp-action="MyOrders">Đơn hàng của tôi</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Chi tiết đơn hàng #@Model.Id</li>
+            </ol>
+        </nav>
+
+        <h1 class="order-detail-title">Chi tiết đơn hàng #@Model.Id</h1>
+        <p class="order-detail-subtitle">Đặt hàng vào ngày @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Order Status -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Trạng thái đơn hàng</h2>
+
+                    @switch (Model.OrderStatus)
+                    {
+                        case "Pending":
+                            <span class="order-status-badge pending">Chờ xử lý</span>
+                            break;
+                        case "Processing":
+                            <span class="order-status-badge processing">Đang xử lý</span>
+                            break;
+                        case "Shipped":
+                            <span class="order-status-badge shipped">Đang giao</span>
+                            break;
+                        case "Delivered":
+                            <span class="order-status-badge delivered">Đã giao</span>
+                            break;
+                        case "Cancelled":
+                            <span class="order-status-badge cancelled">Đã hủy</span>
+                            break;
+                        default:
+                            <span class="order-status-badge">@Model.OrderStatus</span>
+                            break;
+                    }
+                </div>
+
+                <div class="order-card-body">
+                    <div class="order-timeline">
+                        <div class="order-timeline-item">
+                            <div class="order-timeline-icon active"></div>
+                            <div class="order-timeline-content">
+                                <h4 class="order-timeline-title">Đơn hàng đã đặt</h4>
+                                <div class="order-timeline-date">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        </div>
+
+                        <div class="order-timeline-item">
+                            <div class="order-timeline-icon @(Model.OrderStatus == "Processing" || Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered" ? "active" : "")"></div>
+                            <div class="order-timeline-content">
+                                <h4 class="order-timeline-title">Đang xử lý</h4>
+                                <div class="order-timeline-date">
+                                    @(Model.OrderStatus == "Processing" || Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered" ?
+                                        Model.OrderDate.AddDays(1).ToString("dd/MM/yyyy HH:mm") :
+                                        "Đang chờ")
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-timeline-item">
+                            <div class="order-timeline-icon @(Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered" ? "active" : "")"></div>
+                            <div class="order-timeline-content">
+                                <h4 class="order-timeline-title">Đang giao hàng</h4>
+                                <div class="order-timeline-date">
+                                    @(Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered" ?
+                                        Model.OrderDate.AddDays(2).ToString("dd/MM/yyyy HH:mm") :
+                                        "Đang chờ")
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-timeline-item">
+                            <div class="order-timeline-icon @(Model.OrderStatus == "Delivered" ? "active" : "")"></div>
+                            <div class="order-timeline-content">
+                                <h4 class="order-timeline-title">Đã giao hàng</h4>
+                                <div class="order-timeline-date">
+                                    @(Model.OrderStatus == "Delivered" ?
+                                        Model.OrderDate.AddDays(5).ToString("dd/MM/yyyy HH:mm") :
+                                        "Đang chờ")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.OrderStatus == "Shipped")
+                    {
+                        <div class="alert alert-info mt-3 mb-0">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-truck fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading">Đơn hàng đang được giao</h5>
+                                    <p class="mb-0">Đơn hàng của bạn đang được giao đến địa chỉ đã đăng ký. Dự kiến giao hàng vào ngày @Model.OrderDate.AddDays(5).ToString("dd/MM/yyyy").</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.OrderStatus == "Cancelled")
+                    {
+                        <div class="alert alert-danger mt-3 mb-0">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-times-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading">Đơn hàng đã bị hủy</h5>
+                                    <p class="mb-0">Đơn hàng của bạn đã bị hủy. Nếu bạn đã thanh toán, số tiền sẽ được hoàn lại trong vòng 7 ngày làm việc.</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Sản phẩm đã đặt</h2>
+                </div>
+
+                <div class="order-card-body">
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <div class="order-product">
+                            <img src="@(item.Product?.ImageUrl ?? "/images/placeholder.jpg")"
+                                 alt="@(item.Product?.Name ?? "Sản phẩm")" class="order-product-img">
+                            <div class="order-product-info">
+                                <h4 class="order-product-name">
+                                    @if (item.Product != null)
+                                    {
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId" class="text-decoration-none">
+                                            @item.Product.Name
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span>Sản phẩm</span>
+                                    }
+                                </h4>
+                                <div class="order-product-meta">Số lượng: @item.Quantity</div>
+                                <div class="order-product-price">@item.UnitPrice.ToString("N0")₫ x @item.Quantity</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">@item.Subtotal.ToString("N0")₫</div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <div class="order-summary-item">
+                            <div class="order-summary-label">Tạm tính</div>
+                            <div class="order-summary-value">@Model.TotalAmount.ToString("N0")₫</div>
+                        </div>
+                        <div class="order-summary-item">
+                            <div class="order-summary-label">Phí vận chuyển</div>
+                            <div class="order-summary-value">0₫</div>
+                        </div>
+                        <div class="order-summary-item">
+                            <div class="order-summary-label">Giảm giá</div>
+                            <div class="order-summary-value">0₫</div>
+                        </div>
+                        <div class="order-summary-total">
+                            <div class="order-summary-total-label">Tổng cộng</div>
+                            <div class="order-summary-total-value">@Model.TotalAmount.ToString("N0")₫</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Actions -->
+            <div class="order-actions">
+                <a asp-action="MyOrders" class="btn btn-order-action btn-order-back">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                </a>
+
+                @if (Model.OrderStatus == "Shipped")
+                {
+                    <a href="#" class="btn btn-order-action btn-order-track">
+                        <i class="fas fa-truck me-1"></i> Theo dõi đơn hàng
+                    </a>
+                }
+
+                @if (Model.OrderStatus == "Pending" || Model.OrderStatus == "Processing")
+                {
+                    <form asp-action="Cancel" method="post" onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?');">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-order-action btn-order-cancel">
+                            <i class="fas fa-times me-1"></i> Hủy đơn hàng
+                        </button>
+                    </form>
+                }
+
+                @if (Model.OrderStatus == "Delivered")
+                {
+                    <a href="#" class="btn btn-order-action btn-success">
+                        <i class="fas fa-redo me-1"></i> Mua lại
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Shipping Information -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Thông tin giao hàng</h2>
+                </div>
+
+                <div class="order-card-body">
+                    <div class="order-info-item">
+                        <div class="order-info-label">Người nhận</div>
+                        <div class="order-info-value">@Model.ShippingName</div>
+                    </div>
+
+                    <div class="order-info-item">
+                        <div class="order-info-label">Số điện thoại</div>
+                        <div class="order-info-value">@Model.ShippingPhone</div>
+                    </div>
+
+                    <div class="order-info-item">
+                        <div class="order-info-label">Địa chỉ</div>
+                        <div class="order-info-value">
+                            @Model.ShippingAddress<br>
+                            @Model.ShippingCity, @Model.ShippingPostalCode<br>
+                            @Model.ShippingCountry
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Thông tin thanh toán</h2>
+                </div>
+
+                <div class="order-card-body">
+                    <div class="order-info-item">
+                        <div class="order-info-label">Phương thức thanh toán</div>
+                        <div class="order-info-value">@Model.PaymentMethod</div>
+                    </div>
+
+                    <div class="order-info-item">
+                        <div class="order-info-label">Trạng thái thanh toán</div>
+                        <div class="order-info-value">
+                            @switch (Model.PaymentStatus)
+                            {
+                                case "Pending":
+                                    <span class="badge bg-warning text-dark">Chờ thanh toán</span>
+                                    break;
+                                case "Completed":
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                    break;
+                                case "Failed":
+                                    <span class="badge bg-danger">Thanh toán lỗi</span>
+                                    break;
+                                case "Refunded":
+                                    <span class="badge bg-info">Đã hoàn tiền</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@Model.PaymentStatus</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Information -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Thông tin vận chuyển</h2>
+                </div>
+
+                <div class="order-card-body">
+                    <div class="text-center mb-4">
+                        <div class="delivery-info-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h4 class="delivery-info-title">Giao hàng tiêu chuẩn</h4>
+                        <p class="delivery-info-text">Thời gian giao hàng: 3-5 ngày làm việc</p>
+                    </div>
+
+                    @if (Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered")
+                    {
+                        <div class="order-info-item">
+                            <div class="order-info-label">Mã vận đơn</div>
+                            <div class="order-info-value">VN123456789</div>
+                        </div>
+
+                        <div class="order-info-item">
+                            <div class="order-info-label">Đơn vị vận chuyển</div>
+                            <div class="order-info-value">Giao hàng nhanh</div>
+                        </div>
+
+                        <div class="order-info-item">
+                            <div class="order-info-label">Dự kiến giao hàng</div>
+                            <div class="order-info-value">@Model.OrderDate.AddDays(5).ToString("dd/MM/yyyy")</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Thông tin vận chuyển sẽ được cập nhật sau khi đơn hàng được xử lý.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Customer Support -->
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h2 class="order-card-title">Hỗ trợ khách hàng</h2>
+                </div>
+
+                <div class="order-card-body">
+                    <p class="mb-3">Nếu bạn có bất kỳ câu hỏi nào về đơn hàng, vui lòng liên hệ với chúng tôi.</p>
+
+                    <div class="d-grid gap-2">
+                        <a href="tel:+84987654321" class="btn btn-outline-primary">
+                            <i class="fas fa-phone-alt me-2"></i> 0987 654 321
+                        </a>
+                        <a href="mailto:support@example.com" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i> support@example.com
+                        </a>
+                        <a asp-controller="Contact" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="fas fa-comment-dots me-2"></i> Gửi tin nhắn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

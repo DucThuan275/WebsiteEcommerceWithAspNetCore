@@ -1,0 +1,75 @@
+﻿@model BaiTHbuoi1.Models.Supplier
+
+@{
+    ViewData["Title"] = "Xóa Nhà Cung Cấp";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Xóa Nhà Cung Cấp</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Nhà Cung Cấp</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-danger text-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span class="fw-semibold">Xác Nhận Xóa Nhà Cung Cấp</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i> Cảnh Báo!</h4>
+                <p>Bạn có chắc chắn muốn xóa nhà cung cấp này?</p>
+                <p>Hành động này không thể hoàn tác. Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn.</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4 text-light-50">Tên Nhà Cung Cấp:</dt>
+                        <dd class="col-sm-8 fw-semibold">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-light-50">Người Liên Hệ:</dt>
+                        <dd class="col-sm-8">@Model.ContactName</dd>
+
+                        <dt class="col-sm-4 text-light-50">Email:</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+
+                        <dt class="col-sm-4 text-light-50">Số Điện Thoại:</dt>
+                        <dd class="col-sm-8">@Model.Phone</dd>
+
+                        <dt class="col-sm-4 text-light-50">Địa Chỉ:</dt>
+                        <dd class="col-sm-8">@Model.Address</dd>
+                    </dl>
+                </div>
+            </div>
+            <form asp-action="Delete" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Xóa Nhà Cung Cấp
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<Actions>
+    <Action name="Thêm biểu đồ thống kê đơn hàng" description="Bổ sung biểu đồ thống kê đơn hàng theo thời gian" />
+    <Action name="Thêm xuất báo cáo đơn hàng" description="Thêm chức năng xuất báo cáo đơn hàng ra Excel" />
+    <Action name="Thêm quản lý phân quyền" description="Cải thiện hệ thống phân quyền người dùng" />
+    <Action name="Thêm tìm kiếm nâng cao" description="Bổ sung chức năng tìm kiếm nâng cao cho đơn hàng" />
+    <Action name="Thêm thông báo email" description="Thêm chức năng gửi thông báo email khi cập nhật trạng thái đơn hàng" />
+</Actions>
+

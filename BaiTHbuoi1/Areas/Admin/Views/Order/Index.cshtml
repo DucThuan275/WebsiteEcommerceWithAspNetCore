@@ -1,0 +1,179 @@
+﻿@model IEnumerable<BaiTHbuoi1.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản Lý Đơn Hàng";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Quản Lý Đơn Hàng</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Đơn Hàng</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark border-secondary py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    <span class="fw-semibold">Danh Sách Đơn Hàng</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form asp-action="Index" method="get" class="d-flex">
+                        <input type="text" name="searchString" class="form-control bg-dark text-light border-secondary me-2" placeholder="Tìm theo ID, email, tên..." value="@ViewBag.SearchString" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-end">
+                        <div class="btn-group">
+                            <a asp-action="Index" class="btn @(ViewBag.CurrentStatus == null ? "btn-primary" : "btn-outline-light")">Tất cả</a>
+                            @foreach (var status in ViewBag.OrderStatuses)
+                            {
+                                <a asp-action="Index" asp-route-status="@status" class="btn @(ViewBag.CurrentStatus == status ? "btn-primary" : "btn-outline-light")">
+                                    @switch (status)
+                                    {
+                                        case "Pending":
+                                            <span>Chờ xử lý</span>
+                                            break;
+                                        case "Processing":
+                                            <span>Đang xử lý</span>
+                                            break;
+                                        case "Shipped":
+                                            <span>Đã giao hàng</span>
+                                            break;
+                                        case "Delivered":
+                                            <span>Đã nhận hàng</span>
+                                            break;
+                                        case "Cancelled":
+                                            <span>Đã hủy</span>
+                                            break;
+                                        default:
+                                            <span>@status</span>
+                                            break;
+                                    }
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="ordersTable" class="table table-dark table-hover align-middle mb-0">
+                    <thead class="bg-dark-subtle text-light">
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th>Khách Hàng</th>
+                            <th>Ngày Đặt</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th>Thanh Toán</th>
+                            <th class="text-end">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>#@item.Id</td>
+                                <td>
+                                    @if (item.User != null)
+                                    {
+                                        <span>@item.User.FirstName @item.User.LastName</span>
+                                        <small class="d-block text-light-50">@item.User.Email</small>
+                                    }
+                                    else
+                                    {
+                                        <span>@item.ShippingName</span>
+                                    }
+                                </td>
+                                <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.TotalAmount.ToString("N0") ₫</td>
+                                <td>
+                                    @switch (item.OrderStatus)
+                                    {
+                                        case "Pending":
+                                            <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                            break;
+                                        case "Processing":
+                                            <span class="badge bg-info">Đang xử lý</span>
+                                            break;
+                                        case "Shipped":
+                                            <span class="badge bg-primary">Đã giao hàng</span>
+                                            break;
+                                        case "Delivered":
+                                            <span class="badge bg-success">Đã nhận hàng</span>
+                                            break;
+                                        case "Cancelled":
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@item.OrderStatus</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @switch (item.PaymentStatus)
+                                    {
+                                        case "Pending":
+                                            <span class="badge bg-warning text-dark">Chờ thanh toán</span>
+                                            break;
+                                        case "Completed":
+                                            <span class="badge bg-success">Đã thanh toán</span>
+                                            break;
+                                        case "Failed":
+                                            <span class="badge bg-danger">Thất bại</span>
+                                            break;
+                                        case "Refunded":
+                                            <span class="badge bg-info">Đã hoàn tiền</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@item.PaymentStatus</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Chi tiết">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#ordersTable').DataTable({
+                responsive: true,
+                order: [[2, 'desc']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                }
+            });
+
+            // Khởi tạo tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VDUCKTIE Fashion Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <meta name="description" content="VDUCKTIE Fashion Admin - Trang quản trị hệ thống bán hàng thời trang" />
+    <meta name="author" content="VDUCKTIE SHOP" />
+
+
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="brand">VDUCKTIE Fashion</h1>
+                <button class="sidebar-toggle d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <h5>@User.Identity?.Name</h5>
+                    <span>Quản trị viên</span>
+                </div>
+            </div> 
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h6 class="nav-section-title">TỔNG QUAN</h6>
+                    <ul class="nav-items">
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link @IsActive("Home", "Index")">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Bảng điều khiển</span>
+                            </a>
+
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">SẢN PHẨM</h6>
+                    <ul class="nav-items">
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="nav-link @IsActive("Category", "Index")">
+                                <i class="fas fa-tags"></i>
+                                <span>Danh mục</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="nav-link @IsActive("Product", "Index")">
+                                <i class="fas fa-tshirt"></i>
+                                <span>Sản phẩm</span>
+                            </a>
+
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">KHO HÀNG</h6>
+                    <ul class="nav-items">
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Supplier" asp-action="Index" class="nav-link @IsActive("Supplier", "Index")">
+                                <i class="fas fa-truck"></i>
+                                <span>Nhà cung cấp</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Inventory" asp-action="Index" class="nav-link @IsActive("Inventory", "Index")">
+                                <i class="fas fa-warehouse"></i>
+                                <span>Quản lý kho</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">BÁN HÀNG</h6>
+                    <ul class="nav-items">
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="nav-link @IsActive("Order", "Index")">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Đơn hàng</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="User" asp-action="Index" class="nav-link @IsActive("User", "Index")">
+                                <i class="fas fa-users"></i>
+                                <span>Khách hàng</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Slider" asp-action="Index" class="nav-link @IsActive("Slider", "Index")">
+                                <i class="fas fa-percent"></i>
+                                <span>Ảnh bìa (Giới thiệt)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">NỘI DUNG</h6>
+                    <ul class="nav-items">
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="News" asp-action="Index" class="nav-link @IsActive("News", "Index")">
+                                <i class="fas fa-newspaper"></i>
+                                <span>Tin tức</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Contact" asp-action="Index" class="nav-link @IsActive("Contact", "Index")">
+                                <i class="fas fa-envelope"></i>
+                                <span>Liên hệ</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="footer-link" title="Cài đặt">
+                    <i class="fas fa-cog"></i>
+                </a>
+                <a href="#" class="footer-link" title="Trợ giúp">
+                    <i class="fas fa-question-circle"></i>
+                </a>
+                <form class="footer-link" asp-area="" asp-controller="Account" asp-action="Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="logout-btn" title="Đăng xuất">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle d-none d-md-block" id="sidebarToggleLg">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="page-title">@ViewData["Title"]</h2>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Tìm kiếm..." />
+                        <button type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+
+                    <div class="header-actions">
+                        <a href="#" class="header-action" title="Thông báo">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge">3</span>
+                        </a>
+                        <a href="#" class="header-action" title="Tin nhắn">
+                            <i class="fas fa-envelope"></i>
+                            <span class="badge">5</span>
+                        </a>
+                        <div class="dropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout"
+                                          asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <p>&copy; @DateTime.Now.Year - VDUCKTIE Fashion. Đã đăng ký bản quyền.</p>
+                    <div class="footer-links">
+                        <a href="#">Chính sách bảo mật</a>
+                        <span class="separator">|</span>
+                        <a href="#">Điều khoản sử dụng</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
+    @functions {
+        string IsActive(string controller, string action = "")
+        {
+            var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+            var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+            if (!string.IsNullOrEmpty(action))
+            {
+                return (controller == currentController && action == currentAction) ? "active" : "";
+            }
+
+            return (controller == currentController) ? "active" : "";
+        }
+    }
+</body>
+</html>

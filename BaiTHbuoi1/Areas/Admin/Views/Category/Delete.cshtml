@@ -1,0 +1,85 @@
+﻿@model BaiTHbuoi1.Models.Category
+@{
+    ViewData["Title"] = "Xóa Danh Mục";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Xóa Danh Mục</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Danh Mục</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-danger text-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span class="fw-semibold">Xác Nhận Xóa Danh Mục</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i> Cảnh Báo!</h4>
+                <p>Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác.</p>
+                <p>Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn.</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 200px; object-fit: contain;" />
+                    }
+                    else
+                    {
+                        <div class="bg-dark-subtle d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                            <div class="text-center">
+                                <i class="fas fa-folder fa-5x text-light-50 mb-3"></i>
+                                <p class="text-light-50">Không có hình ảnh</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-light-50">Tên Danh Mục:</dt>
+                        <dd class="col-sm-9 fw-semibold">@Model.Name</dd>
+
+                        <dt class="col-sm-3 text-light-50">Mô Tả:</dt>
+                        <dd class="col-sm-9">
+                            @if (string.IsNullOrEmpty(Model.Description))
+                            {
+                                <span class="text-light-50">Không có mô tả</span>
+                            }
+                            else
+                            {
+                                @Model.Description
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3 text-light-50">Thứ Tự Hiển Thị:</dt>
+                        <dd class="col-sm-9">@Model.DisplayOrder</dd>
+                    </dl>
+                </div>
+            </div>
+            <form asp-action="Delete" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Xóa Danh Mục
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

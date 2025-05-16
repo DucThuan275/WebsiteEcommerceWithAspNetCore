@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!-- Tài khoản người dùng -->
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                <span class="d-none d-lg-inline">@(UserManager.GetUserAsync(User).Result?.FirstName ?? "Người dùng")</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item rounded-3" asp-area="" asp-controller="Account" asp-action="Profile">
+                        <i class="far fa-user me-2"></i> Hồ sơ của tôi
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item rounded-3" asp-area="" asp-controller="Account" asp-action="ChangePassword">
+                        <i class="fas fa-lock me-2"></i> Đổi mật khẩu
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item rounded-3" asp-area="" asp-controller="Order" asp-action="MyOrders">
+                        <i class="fas fa-shopping-bag me-2"></i> Đơn hàng của tôi
+                    </a>
+                </li>
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <li><hr class="dropdown-divider my-2"></li>
+                    <li>
+                        <a class="dropdown-item rounded-3 text-danger" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-crown me-2"></i> Quản trị hệ thống
+                        </a>
+                    </li>
+                }
+                <li><hr class="dropdown-divider my-2"></li>
+                <li>
+                    <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="dropdown-item rounded-3">
+                            <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ForgotPassword">Quên mật khẩu</a>
+        </li>
+        <li class="nav-item ms-2 d-none d-lg-block">
+            <a class="btn btn-outline-dark rounded-pill px-3" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a>
+        </li>
+    }
+</ul>

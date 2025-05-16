@@ -1,0 +1,266 @@
+﻿@model BaiTHbuoi1.Models.Contact
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<style>
+    :root {
+        --primary-color: #4285f4;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --text-muted: #6c757d;
+    }
+
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .contact-header {
+        margin-bottom: 2rem;
+    }
+
+    .contact-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .contact-form-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+    }
+
+    .form-control {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(66, 133, 244, 0.25);
+        }
+
+    textarea.form-control {
+        min-height: 150px;
+    }
+
+    .btn-submit {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+        .btn-submit:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+        }
+
+    .contact-info-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
+
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-info-icon {
+        background-color: rgba(66, 133, 244, 0.1);
+        border-radius: 50%;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        height: 48px;
+        width: 48px;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .contact-info-content h5 {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .contact-info-content p {
+        color: var(--text-muted);
+        margin-bottom: 0;
+    }
+
+    .social-links {
+        display: flex;
+        margin-top: 1.5rem;
+    }
+
+    .social-link {
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        height: 40px;
+        width: 40px;
+        margin-right: 0.75rem;
+        transition: all 0.3s;
+    }
+
+        .social-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+    .map-container {
+        border-radius: 8px;
+        overflow: hidden;
+        height: 300px;
+        margin-top: 2rem;
+    }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+    .follow-us {
+        margin-top: 2rem;
+    }
+
+        .follow-us h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+</style>
+
+<div class="container contact-container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="contact-header">
+                <h1 class="contact-title">Liên hệ với chúng tôi</h1>
+                <p class="contact-subtitle">Hãy liên hệ với chúng tôi nếu bạn có bất kỳ thắc mắc nào</p>
+            </div>
+
+            <div class="contact-form-container">
+                <form asp-action="Send" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                    <input asp-for="Name" class="form-control" placeholder="Họ và tên" />
+                    <span asp-validation-for="Name" class="text-danger d-block mb-3"></span>
+
+                    <input asp-for="Email" class="form-control" placeholder="Email của bạn" />
+                    <span asp-validation-for="Email" class="text-danger d-block mb-3"></span>
+
+                    <input asp-for="Phone" class="form-control" placeholder="Số điện thoại" />
+                    <span asp-validation-for="Phone" class="text-danger d-block mb-3"></span>
+
+                    <input asp-for="Subject" class="form-control" placeholder="Tiêu đề" />
+                    <span asp-validation-for="Subject" class="text-danger d-block mb-3"></span>
+
+                    <textarea asp-for="Message" class="form-control" placeholder="Nội dung tin nhắn"></textarea>
+                    <span asp-validation-for="Message" class="text-danger d-block mb-3"></span>
+
+                    <button type="submit" class="btn btn-submit">
+                        GỬI TIN NHẮN
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.0966108822556!2d105.78010801476343!3d21.028817785998484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab4cd0c66f05%3A0xea31563511af2e54!2sHanoi%20University%20of%20Science%20and%20Technology!5e0!3m2!1sen!2s!4v1625123456789!5m2!1sen!2s" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <div class="contact-info-container p-4 mt-4">
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h5>Địa chỉ:</h5>
+                        <p>Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h5>Email:</h5>
+                        <p>info@hust.edu.vn</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h5>Điện thoại:</h5>
+                        <p>024 3869 4242</p>
+                    </div>
+                </div>
+
+                <div class="follow-us">
+                    <h5>Theo dõi chúng tôi</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function() {
+            // Auto format phone number input
+            $('#Phone').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    </script>
+}

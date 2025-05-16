@@ -1,0 +1,408 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VDUCKTIE FASHION</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #d82f4b;
+            --secondary-color: #f8f1e9;
+            --accent-color: #e8c07d;
+            --text-color: #333;
+            --light-color: #f9f9f9;
+            --dark-color: #1a1a1a;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 80px; /* Để tránh bị menu đè lên nội dung */
+        }
+
+        /* Header cố định */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+            .navbar.scrolled {
+                padding: 10px 0;
+                background-color: rgba(255, 255, 255, 0.95);
+            }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            transition: var(--transition);
+            position: relative;
+            color: var(--dark-color);
+        }
+
+            .nav-link:hover,
+            .nav-link:focus {
+                color: var(--primary-color);
+            }
+
+            .nav-link.active {
+                color: var(--primary-color);
+                font-weight: 600;
+            }
+
+                .nav-link.active::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 1.2rem;
+                    right: 1.2rem;
+                    height: 2px;
+                    background-color: var(--primary-color);
+                }
+
+        .cart-badge {
+            font-size: 0.7rem;
+            vertical-align: top;
+        }
+
+        /* Nội dung chính */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Thông báo */
+        .alert {
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: none;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-heading {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            color: #fff;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+            .footer-heading::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background-color: var(--primary-color);
+            }
+
+        .footer-link {
+            color: #bbb;
+            transition: var(--transition);
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            text-decoration: none;
+        }
+
+            .footer-link:hover,
+            .footer-link:focus {
+                color: var(--accent-color);
+                transform: translateX(5px);
+            }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-right: 0.8rem;
+            transition: var(--transition);
+        }
+
+            .social-icon:hover {
+                background-color: var(--primary-color);
+                color: #fff;
+                transform: translateY(-3px);
+            }
+
+        .newsletter-input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+            .newsletter-input::placeholder {
+                color: #ccc;
+            }
+
+        .newsletter-btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        {
+            padding: 20px 0;
+        }
+
+        .navbar-brand {
+            font-size: 2rem;
+        }
+
+        }
+
+        {
+            padding-top: 70px;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+
+        .footer-section {
+            margin-bottom: 2rem;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Header cố định -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span style="color: var(--primary-color)">VDU</span><span style="color: var(--dark-color)">CKTIE</span> FASHION
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu"
+                        aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainMenu">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+                               asp-controller="Home" asp-action="Index">TRANG CHỦ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")"
+                               asp-controller="Product" asp-action="Index">SẢN PHẨM</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Collection" ? "active" : "")"
+                               asp-controller="News" asp-action="Index">TIN TỨC</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Contact" ? "active" : "")"
+                               asp-controller="Contact" asp-action="Index">LIÊN HỆ</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <partial name="_LoginPartial" />
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-bag fs-5"></i>
+                                @{
+                                    var cartJson = Context.Session.GetString("Cart");
+                                    var cartCount = 0;
+                                    if (!string.IsNullOrEmpty(cartJson))
+                                    {
+                                        var cart = System.Text.Json.JsonSerializer.Deserialize<List<BaiTHbuoi1.Controllers.CartItem>>(cartJson);
+                                        cartCount = cart?.Sum(i => i.Quantity) ?? 0;
+                                    }
+                                }
+                                @if (cartCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
+                                        @cartCount
+                                    </span>
+                                }
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <div class="container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 footer-section mb-4">
+                    <h5 class="footer-heading">VDUCKTIE FASHION</h5>
+                    <p class="mb-4">Thương hiệu thời trang Việt với những thiết kế tinh tế, kết hợp giữa nét đẹp truyền thống và hiện đại.</p>
+                    <p>
+                        <i class="fas fa-map-marker-alt me-2"></i> 123 Đường Lê Lợi, Quận 1, TP.HCM<br>
+                        <i class="fas fa-phone me-2"></i> (028) 3823 4567<br>
+                        <i class="fas fa-envelope me-2"></i> info@vducktie.com
+                    </p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 footer-section mb-4">
+                    <h5 class="footer-heading">THÔNG TIN</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="footer-link" href="/">Trang chủ</a></li>
+                        <li><a class="footer-link" href="/Product">Sản phẩm</a></li>
+                        <li><a class="footer-link" href="/Collection">Bộ sưu tập</a></li>
+                        <li><a class="footer-link" href="/About">Về chúng tôi</a></li>
+                        <li><a class="footer-link" href="/Blog">Tin tức</a></li>
+                        <li><a class="footer-link" href="/Contact">Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-section mb-4">
+                    <h5 class="footer-heading">HỖ TRỢ</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="footer-link" href="/Policy">Chính sách bảo mật</a></li>
+                        <li><a class="footer-link" href="/Shipping">Chính sách vận chuyển</a></li>
+                        <li><a class="footer-link" href="/Return">Chính sách đổi trả</a></li>
+                        <li><a class="footer-link" href="/Payment">Phương thức thanh toán</a></li>
+                        <li><a class="footer-link" href="/FAQ">Câu hỏi thường gặp</a></li>
+                        <li><a class="footer-link" href="/SizeGuide">Hướng dẫn chọn size</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-section mb-4">
+                    <h5 class="footer-heading">KẾT NỐI</h5>
+                    <div class="mb-4">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+                    </div>
+
+                    <h5 class="footer-heading">ĐĂNG KÝ NHẬN TIN</h5>
+                    <p class="mb-3">Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt.</p>
+                    <form class="mb-4">
+                        <div class="input-group">
+                            <input type="email" class="form-control newsletter-input" placeholder="Email của bạn" required>
+                            <button class="btn newsletter-btn" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="payment-methods">
+                        <img src="https://via.placeholder.com/40x25?text=COD" alt="COD" class="me-2" title="Thanh toán khi nhận hàng">
+                        <img src="https://via.placeholder.com/40x25?text=VNPAY" alt="VNPay" class="me-2" title="VNPay">
+                        <img src="https://via.placeholder.com/40x25?text=MOMO" alt="Momo" class="me-2" title="Ví Momo">
+                        <img src="https://via.placeholder.com/40x25?text=ZALOPAY" alt="ZaloPay" title="Ví ZaloPay">
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright text-center">
+                <p class="mb-0">&copy; @DateTime.Now.Year <strong>VDUCKTIE FASHION</strong>. Bảo lưu mọi quyền.</p>
+                <p class="mt-2">Giấy chứng nhận ĐKKD số: 123456789 do Sở KHĐT TP.HCM cấp ngày 01/01/2020</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Hiệu ứng cuộn cho menu
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 50) {
+                $('.navbar').addClass('scrolled');
+            } else {
+                $('.navbar').removeClass('scrolled');
+            }
+        });
+
+        // Đánh dấu menu active
+        $(document).ready(function(){
+            var current = location.pathname;
+            $('.nav-link').each(function(){
+                var $this = $(this);
+                if ($this.attr('href') === current) {
+                    $this.addClass('active');
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

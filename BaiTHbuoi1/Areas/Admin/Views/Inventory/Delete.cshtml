@@ -1,0 +1,64 @@
+﻿@model BaiTHbuoi1.Models.Inventory
+
+@{
+    ViewData["Title"] = "Xóa Phiếu Nhập Kho";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Xóa Phiếu Nhập Kho</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Kho Hàng</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-danger text-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span class="fw-semibold">Xác Nhận Xóa Phiếu Nhập Kho</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger bg-danger bg-opacity-25 border-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i> Cảnh Báo!</h4>
+                <p>Bạn có chắc chắn muốn xóa phiếu nhập kho này?</p>
+                <p>Hành động này không thể hoàn tác. Xóa phiếu này sẽ giảm số lượng tồn kho của sản phẩm theo số lượng hiển thị bên dưới.</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4 text-light-50">Sản Phẩm:</dt>
+                        <dd class="col-sm-8 fw-semibold">@(Model.Product?.Name ?? "N/A")</dd>
+
+                        <dt class="col-sm-4 text-light-50">Nhà Cung Cấp:</dt>
+                        <dd class="col-sm-8">@(Model.Supplier?.Name ?? "N/A")</dd>
+
+                        <dt class="col-sm-4 text-light-50">Số Lượng:</dt>
+                        <dd class="col-sm-8">@Model.Quantity</dd>
+
+                        <dt class="col-sm-4 text-light-50">Ngày Nhập:</dt>
+                        <dd class="col-sm-8">@Model.ReceivedDate.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+                </div>
+            </div>
+            <form asp-action="Delete" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Xóa Phiếu Nhập
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

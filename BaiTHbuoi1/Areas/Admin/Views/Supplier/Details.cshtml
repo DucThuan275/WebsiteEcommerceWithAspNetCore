@@ -1,0 +1,123 @@
+﻿@model BaiTHbuoi1.Models.Supplier
+
+@{
+    ViewData["Title"] = "Chi Tiết Nhà Cung Cấp";
+}
+
+<div class="container-fluid px-4 py-3 bg-dark text-light">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fs-2 fw-bold mb-1">Chi Tiết Nhà Cung Cấp</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-light-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-light-50 text-decoration-none">Nhà Cung Cấp</a></li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">Chi Tiết</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit me-1"></i> Chỉnh Sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Quay Lại
+            </a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark border-secondary py-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle me-2"></i>
+                <span class="fw-semibold">Thông Tin Nhà Cung Cấp</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4 text-light-50">Tên Nhà Cung Cấp:</dt>
+                        <dd class="col-sm-8 fw-semibold">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-light-50">Người Liên Hệ:</dt>
+                        <dd class="col-sm-8">@Model.ContactName</dd>
+
+                        <dt class="col-sm-4 text-light-50">Email:</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+
+                        <dt class="col-sm-4 text-light-50">Số Điện Thoại:</dt>
+                        <dd class="col-sm-8">@Model.Phone</dd>
+
+                        <dt class="col-sm-4 text-light-50">Địa Chỉ:</dt>
+                        <dd class="col-sm-8">@Model.Address</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit me-1"></i> Chỉnh Sửa
+                </a>
+                <a asp-action="Index" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-1"></i> Quay Lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.Products != null && ViewBag.Products.Count > 0)
+    {
+        <div class="card bg-dark text-light border-0 shadow-sm mb-4">
+            <div class="card-header bg-dark border-secondary py-3">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-box me-2"></i>
+                    <span class="fw-semibold">Sản Phẩm Từ Nhà Cung Cấp Này</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="bg-dark-subtle text-light">
+                            <tr>
+                                <th class="ps-3">Hình Ảnh</th>
+                                <th>Tên Sản Phẩm</th>
+                                <th>Danh Mục</th>
+                                <th>Giá</th>
+                                <th>Tồn Kho</th>
+                                <th class="text-end pe-3">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            @foreach (var product in ViewBag.Products)
+                            {
+                                <tr>
+                                    <td class="ps-3">
+                                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                        {
+                                            <img src="@product.ImageUrl" alt="@product.Name" class="rounded" style="width: 50px; height: 50px; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-dark-subtle d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 50px;">
+                                                <i class="fas fa-box text-light-50"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>@product.Name</td>
+                                    <td>@product.Category?.Name</td>
+                                    <td>@product.Price.ToString("N0") ₫</td>
+                                    <td>@product.Stock</td>
+                                    <td class="text-end pe-3">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Chi tiết">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
